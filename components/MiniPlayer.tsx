@@ -1,16 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Box, Text, Image } from 'react-native-design-utility';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { usePlayerContext } from '../contexts/PlayerContexts';
+import { usePlayerContext } from '../contexts/PlayerContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useNavigationState } from '@react-navigation/native';
-import { NavigationContext } from '../contexts/NavigationContext';
+import { useSelector } from 'react-redux';
 
 const MiniPlayer = () => {
+    const currentScreen = useSelector(state => state.currentScreen);
     const playerContext = usePlayerContext();
-    const navigationContext = useContext(NavigationContext);
 
-    if(playerContext.isEmpty || !playerContext.currentTrack || !navigationContext.isMusicScreen) {
+    if (playerContext.isEmpty || !playerContext.currentTrack || currentScreen === 'Music') {
         return null;
     }
 

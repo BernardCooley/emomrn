@@ -6,10 +6,15 @@ import TrackPlayerServices from './service';
 import { StyleSheet } from 'react-native';
 import { Box } from 'react-native-design-utility';
 import { ActivityIndicator } from 'react-native-paper';
-import { PlayerContextProvider } from './contexts/PlayerContexts';
+import { PlayerContextProvider } from './contexts/PlayerContext';
 import MainStackNavigator from './navigation/MainStackNavigation';
+import rootReducer from './Reducers';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux'
 
 const App = () => {
+  const store = createStore(rootReducer);
+
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -21,19 +26,19 @@ const App = () => {
   }, []);
 
   return (
-    <>
-      {isReady ?
-        <PlayerContextProvider>
-          <NavigationContainer>
-            <MainStackNavigator/>
-          </NavigationContainer>
-        </PlayerContextProvider>
-        : (
-          <Box f={1} center>
-            <ActivityIndicator />
-          </Box>
-        )}
-    </>
+    <Provider store={store}>
+        {isReady ?
+          <PlayerContextProvider>
+            <NavigationContainer>
+              <MainStackNavigator />
+            </NavigationContainer>
+          </PlayerContextProvider>
+          : (
+            <Box f={1} center>
+              <ActivityIndicator />
+            </Box>
+          )}
+    </Provider>
   );
 }
 

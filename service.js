@@ -4,10 +4,8 @@ export default async function TrackPlayerServices() {
     TrackPlayer.addEventListener('remote-play', () => TrackPlayer.play());
     TrackPlayer.addEventListener('remote-pause', () => TrackPlayer.pause());
     TrackPlayer.addEventListener('remote-stop', () => TrackPlayer.destroy());
-    TrackPlayer.addEventListener('playback-track-changed', () => {
-
-    });
-    TrackPlayer.addEventListener('playback-state', state => {
+    TrackPlayer.addEventListener('playback-track-changed', () => { });
+    TrackPlayer.addEventListener('playback-state', (state) => {
         console.log('playback-state', state);
     });
-}   
+}
