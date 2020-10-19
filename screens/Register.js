@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 
 
-const RegisterPage = ({navigation}) => {
+const RegisterScreen = ({navigation}) => {
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Text>Register</Text>
@@ -14,4 +14,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default RegisterPage;
+export default RegisterScreen;

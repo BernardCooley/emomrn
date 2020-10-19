@@ -7,7 +7,7 @@ interface PlayerContextType {
     isStopped: boolean;
     isEmpty: boolean;
     currentTrack: Track | null;
-    play: (track: Track) => void;
+    play: (track?: Track) => void;
     pause: () => void;
 }
 
@@ -38,7 +38,14 @@ export const PlayerContextProvider: React.FC = props => {
         }
     }, []);
 
-    const play = async (track: Track) => {
+    const play = async (track?: Track) => {
+        if(!track) {
+            if(currentTrack) {
+                await RNTrackPlayer.play();
+            }
+            return;
+        }
+
         await RNTrackPlayer.add([track]);
         setCurrentTrack(track);
         await RNTrackPlayer.play();

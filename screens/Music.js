@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 
 
-const MusicPage = ({navigation}) => {
+const MusicScreen = ({navigation}) => {
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Text>Music</Text>
@@ -14,4 +14,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default MusicPage;
+export default MusicScreen;
