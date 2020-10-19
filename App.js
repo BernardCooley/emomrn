@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import TrackPlayerServices from './service';
 import { StyleSheet } from 'react-native';
@@ -13,24 +13,30 @@ import RegisterPage from './screens/Register';
 import { TrackData } from './data/TrackData';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Colors from './constants/Colours';
+import { Box } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 
 const Tab = createMaterialBottomTabNavigator();
 
 const App = () => {
+  const [isReady, setIsReady] = useState(false);
+
   useEffect(() => {
     TrackPlayer.setupPlayer().then(() => {
-      // The player is ready to be used
+      TrackPlayer.registerPlaybackService(() => TrackPlayerServices);
+      setIsReady(true);
     });
-
-    TrackPlayer.registerPlaybackService(() => TrackPlayerServices);
   }, []);
-
-  TrackPlayer.add([TrackData[0], TrackData[1]]).then(() => {
-    // The tracks were added
-  });
 
   return (
     <NavigationContainer>
+      {isReady ? 
+        <Box f={1} center>
+          <ActivityIndicator/>
+        </Box> : null}
+
+
+
       <Tab.Navigator
         initialRouteName="Music"
         activeColor={Colors.tabIconSelected}
