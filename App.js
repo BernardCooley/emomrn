@@ -1,113 +1,99 @@
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
-import { View, Text } from 'react-native';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import React, { useEffect } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import TrackPlayerServices from './service';
+import { StyleSheet } from 'react-native';
+import AccountPage from './screens/Account';
+import MusicPage from './screens/Music';
+import ExplorePage from './screens/Explore';
+import LoginPage from './screens/Login';
+import RegisterPage from './screens/Register';
+import { TrackData } from './data/TrackData';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Colors from './constants/Colours';
 
-TrackPlayer.setupPlayer().then(() => {
-  // The player is ready to be used
-});
+const Tab = createMaterialBottomTabNavigator();
 
-TrackPlayer.registerPlaybackService(() => TrackPlayerServices);
+const App = () => {
+  useEffect(() => {
+    TrackPlayer.setupPlayer().then(() => {
+      // The player is ready to be used
+    });
 
-var track = {
-    id: 'unique track id', // Must be a string, required
-  url:
-    'file://C:/Users/berna/Google Drive/Ableton projects/Wave Function/Takes/Tape Twelve - Wave Function (draft 1)', // Load media from the file system
-    title: 'Avaritia',
-    artist: 'deadmau5',
-    album: 'while(1<2)',
-    genre: 'Progressive House, Electro House',
-    date: '2014-05-20T07:00:00+00:00', // RFC 3339
-  artwork:
-    'file://C:/Users/berna/Google Drive/Camera Uploads/2016-11-27 22.01.07', // Load artwork from the file system
-};
+    TrackPlayer.registerPlaybackService(() => TrackPlayerServices);
+  }, []);
 
-var track2 = {
-  id: 'unique track id', // Must be a string, required
-  url:
-    'file://C:/Users/berna/Google Drive/Ableton projects/Wave Function/Takes/Tape Twelve - Wave Function (draft 1)', // Load media from the file system
-  title: 'Avaritia',
-  artist: 'deadmau5',
-  album: 'while(1<2)',
-  genre: 'Progressive House, Electro House',
-  date: '2014-05-20T07:00:00+00:00', // RFC 3339
-  artwork:
-    'file://C:/Users/berna/Google Drive/Camera Uploads/2016-11-27 22.01.07', // Load artwork from the file system
-};
+  TrackPlayer.add([TrackData[0], TrackData[1]]).then(() => {
+    // The tracks were added
+  });
 
-TrackPlayer.add([track, track2]).then(function () {
-  // The tracks were added
-});
-
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
-    </View>
-  );
-}
-
-function DetailsScreen() {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
-    </View>
-  );
-}
-
-const Stack = createStackNavigator();
-
-function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
-      </Stack.Navigator>
+      <Tab.Navigator
+        initialRouteName="Music"
+        activeColor={Colors.tabIconSelected}
+        inactiveColor={Colors.tabIconDefault}
+        barStyle={{ backgroundColor: Colors.tabBar }}>
+
+        {/* <Tab.Screen
+          name="Register"
+          component={RegisterPage}
+          options={{
+            tabBarLabel: 'Register',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="account-plus" color={color} size={26} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Login"
+          component={LoginPage}
+          options={{
+            tabBarLabel: 'Login',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="login" color={color} size={26} />
+            ),
+          }}
+        /> */}
+        <Tab.Screen
+          name="Music"
+          component={MusicPage}
+          options={{
+            tabBarLabel: 'Music',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="music" color={color} size={26} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Explore"
+          component={ExplorePage}
+          options={{
+            tabBarLabel: 'Explore',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="music-box-multiple" color={color} size={26} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Account"
+          component={AccountPage}
+          options={{
+            tabBarLabel: 'Account',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="account" color={color} size={26} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
 
-// const styles = StyleSheet.create({
-//   scrollView: {
-//     backgroundColor: Colors.lighter,
-//   },
-//   engine: {
-//     position: 'absolute',
-//     right: 0,
-//   },
-//   body: {
-//     backgroundColor: Colors.white,
-//   },
-//   sectionContainer: {
-//     marginTop: 32,
-//     paddingHorizontal: 24,
-//   },
-//   sectionTitle: {
-//     fontSize: 24,
-//     fontWeight: '600',
-//     color: Colors.black,
-//   },
-//   sectionDescription: {
-//     marginTop: 8,
-//     fontSize: 18,
-//     fontWeight: '400',
-//     color: Colors.dark,
-//   },
-//   highlight: {
-//     fontWeight: '700',
-//   },
-//   footer: {
-//     color: Colors.dark,
-//     fontSize: 12,
-//     fontWeight: '600',
-//     padding: 4,
-//     paddingRight: 12,
-//     textAlign: 'right',
-//   },
-// });
+const styles = StyleSheet.create({
+
+});
 
 export default App;
