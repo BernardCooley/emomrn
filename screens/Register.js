@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, SafeAreaView, ScrollView } from 'react-native';
-import { TextInput, Button, Text } from 'react-native-paper';
+import { StyleSheet, View, SafeAreaView, ScrollView, Image } from 'react-native';
+import { TextInput, Button, Text, Avatar, IconButton } from 'react-native-paper';
+import DocumentPicker from 'react-native-document-picker';
 
 import formStyles from '../styles/FormStyles';
 
@@ -9,7 +10,7 @@ const RegisterScreen = ({ navigation }) => {
     const [artistName, setArtistName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [artistImage, setArtistImage] = useState('');
+    const [artistImage, setArtistImage] = useState({});
     const [bio, setBio] = useState('');
 
     const [formIsValid, setFormIsValid] = useState(false);
@@ -30,12 +31,31 @@ const RegisterScreen = ({ navigation }) => {
         validate();
     }, [artistName, email, password, artistImage, bio]);
 
+    const lauchFileUploader = async () => {
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.images],
+            });
+            setArtistImage(res);
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+                throw err;
+            }
+        }
+    }
+
     const validate = () => {
         errors.artistName.valid = artistName.length > 0;
         errors.email.valid = /\S+@\S+\.\S+/.test(email);
         errors.password.valid = password.length >= 6;
 
         errors.artistName.valid && errors.email.valid && errors.password.valid ? setFormIsValid(true) : setFormIsValid(false);
+    }
+
+    const removeImage = () => {
+        setArtistImage({});
     }
 
     const register = () => {
@@ -74,17 +94,19 @@ const RegisterScreen = ({ navigation }) => {
                         />
                         <TextInput
                             style={styles.input}
-                            label="Artist image (optional)"
-                            value={artistImage}
-                            onChangeText={artistImage => setArtistImage(artistImage)}
-                        />
-                        <TextInput
-                            style={styles.input}
                             label="Bio (optional)"
                             value={bio}
                             onChangeText={bio => setBio(bio)}
                             multiline
                         />
+                        <Text style={styles.artistImageLabel}>Artist image (optional)</Text>
+                        {artistImage.uri ?
+                            <View style={styles.artistImageContainer}>
+                                <Avatar.Image style={styles.artistImage} size={300} source={{ uri: artistImage.uri }} />
+                                <Text onPress={removeImage} style={styles.deleteImageButton}>delete</Text>
+                            </View> :
+                            <IconButton style={styles.uploadButton} animated icon="camera" size={30} onPress={lauchFileUploader}/>
+                        }
                         <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={register}>
                             Register
                         </Button>
@@ -104,7 +126,29 @@ const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     ...formStyles,
     scrollView: {
-        
+
+    },
+    artistImageContainer: {
+        marginTop: 20,
+        flex: 1,
+        alignItems: 'center'
+    },
+    artistImage: {
+        margin: 'auto'
+    },
+    uploadButton: {
+        marginLeft: 15
+    },
+    artistImageLabel: {
+        fontSize: 20,
+        color: 'gray',
+        paddingLeft: 25,
+        paddingTop: 25
+    },
+    deleteImageButton: {
+        color: 'red',
+        marginTop: 10,
+        fontSize: 15
     }
 });
 
