@@ -21,6 +21,7 @@ const LoginScreen = ({navigation}) => {
     useEffect(() => {
         errors.email = /\S+@\S+\.\S+/.test(email) ? 'valid': 'invalid';
         errors.password = password.length >= 6 ? 'valid': 'invalid';
+        
         errors.email === 'valid' && errors.password === 'valid' ? setFormIsValid(true) : setFormIsValid(false);
     }, [email, password]);
 

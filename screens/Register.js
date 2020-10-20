@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, View, SafeAreaView, ScrollView } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 
@@ -20,9 +20,29 @@ const RegisterScreen = ({navigation}) => {
 
     const [formIsValid, setFormIsValid] = useState(false);
 
+    const errors = {
+        artistName: {
+            valid: false
+        },
+        email: {
+            valid: false
+        },
+        password: {
+            valid: false
+        }
+    };
+
     useEffect(() => {
+        validate();
+    }, [artistName, email, password, artistImage, bio]);
+
+    const validate = () => {
+        errors.artistName.valid = artistName.length > 0;
+        errors.email.valid = /\S+@\S+\.\S+/.test(email);
+        errors.password.valid = password.length >= 6;
         
-    }, [artistName, email, password, artistImage, bio])
+        errors.artistName.valid && errors.email.valid && errors.password.valid ? setFormIsValid(true) : setFormIsValid(false);
+    }
 
     const register = () => {
         console.log(artistName);
@@ -71,6 +91,7 @@ const RegisterScreen = ({navigation}) => {
                     label="Bio (optional)"
                     value={bio}
                     onChangeText={bio => setBio(bio)}
+                    multiline
                 />
                     <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={register}>
                     Register
