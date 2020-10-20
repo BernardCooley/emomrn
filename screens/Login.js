@@ -14,15 +14,19 @@ const LoginScreen = ({navigation}) => {
     const [formIsValid, setFormIsValid] = useState(false);
 
     const errors = {
-        email: 'invalid',
-        password: 'invalid'
+        email: {
+            valid: false
+        },
+        password: {
+            valid: false
+        }
     };
 
     useEffect(() => {
-        errors.email = /\S+@\S+\.\S+/.test(email) ? 'valid': 'invalid';
-        errors.password = password.length >= 6 ? 'valid': 'invalid';
+        errors.email.valid = /\S+@\S+\.\S+/.test(email);
+        errors.password.valid = password.length >= 6;
         
-        errors.email === 'valid' && errors.password === 'valid' ? setFormIsValid(true) : setFormIsValid(false);
+        errors.email.valid && errors.password.valid ? setFormIsValid(true) : setFormIsValid(false);
     }, [email, password]);
 
     const login = () => {
