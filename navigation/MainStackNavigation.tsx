@@ -9,7 +9,7 @@ const MainStack = createStackNavigator();
 
 const MainStackNavigator = () => {
     return (
-        <MainStack.Navigator headerMode='none'>
+        <MainStack.Navigator>
             <MainStack.Screen name='Login' component={LoginScreen} />
             <MainStack.Screen name='Register' component={RegisterScreen} />
             <MainStack.Screen name='Tabs' component={MainTabNavigator}/>
