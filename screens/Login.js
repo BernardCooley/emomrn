@@ -12,33 +12,17 @@ const LoginScreen = ({navigation}) => {
     const [password, setPassword] = useState('');
 
     const [formIsValid, setFormIsValid] = useState(false);
-    const [errors, setErrors] = useState({
+
+    const errors = {
         email: 'invalid',
         password: 'invalid'
-    });
+    };
 
     useEffect(() => {
-        if (/\S+@\S+\.\S+/.test(email)) {
-            setErrors({ ...errors, email: 'valid' })
-        } else {
-            setErrors({ ...errors, email: 'invalid' })
-        }
-
-        if (password.length > 5) {
-            setErrors({ ...errors, password: 'valid' })
-        } else {
-            setErrors({ ...errors, password: 'invalid' })
-        }
-        console.log(errors)
+        errors.email = /\S+@\S+\.\S+/.test(email) ? 'valid': 'invalid';
+        errors.password = password.length >= 6 ? 'valid': 'invalid';
+        errors.email === 'valid' && errors.password === 'valid' ? setFormIsValid(true) : setFormIsValid(false);
     }, [email, password]);
-
-    const validateForm = () => {
-        if (errors.email === 'valid' && errors.password === 'valid') {
-            setFormIsValid(true);
-        } else {
-            setFormIsValid(false);
-        }
-    }
 
     const login = () => {
         console.log(email);
@@ -54,7 +38,6 @@ const LoginScreen = ({navigation}) => {
                     label="Email"
                     value={email}
                     onChangeText={email => setEmail(email)}
-                    onBlur={validateForm}
                 />
                 <TextInput
                     ref={passwordRef}
@@ -62,7 +45,6 @@ const LoginScreen = ({navigation}) => {
                     label="Password"
                     value={password}
                     onChangeText={password => setPassword(password)}
-                    onBlur={validateForm}
                 />
                 <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={login}>
                     Log in
