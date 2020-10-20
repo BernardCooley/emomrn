@@ -4,3 +4,10 @@ export const currentScreen = screenName => {
         payload: screenName
     };
 };
+
+export const user = user => {
+    return {
+        type: 'USER',
+        payload: user
+    };
+};

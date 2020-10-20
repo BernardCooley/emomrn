@@ -1,8 +1,10 @@
 import screenReducers from './screenReducers';
+import authReducers from './authReducers';
 import { combineReducers } from 'redux';
 
 const allReducers = combineReducers({
-    currentScreen: screenReducers.currentScreen
+    currentScreen: screenReducers.currentScreen,
+    user: authReducers.user
 });
 
 const rootReducer = (state, action) => {

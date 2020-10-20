@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, SafeAreaView, ScrollView, Image } from 'react-native';
 import { TextInput, Button, Text, Avatar, IconButton } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
+import auth from '@react-native-firebase/auth';
 
 import formStyles from '../styles/FormStyles';
 
@@ -58,12 +59,17 @@ const RegisterScreen = ({ navigation }) => {
         setArtistImage({});
     }
 
-    const register = () => {
-        console.log(artistName);
-        console.log(email);
-        console.log(password);
-        console.log(artistImage);
-        console.log(bio);
+    const register = async () => {
+
+        auth().createUserWithEmailAndPassword(email, password).then(() => {
+            navigation.navigate('Music');
+        });
+
+        // console.log(artistName);
+        // console.log(email);
+        // console.log(password);
+        // console.log(artistImage);
+        // console.log(bio);
     }
 
     return (

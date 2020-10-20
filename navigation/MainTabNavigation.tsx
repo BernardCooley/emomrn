@@ -14,7 +14,7 @@ const AccountScreenStack = createStackNavigator();
 
 const MusicScreenStackNavigator = () => {
   return (
-    <MusicScreenStack.Navigator>
+    <MusicScreenStack.Navigator headerMode='none'>
       <MusicScreenStack.Screen name='Music' component={MusicScreen} />
     </MusicScreenStack.Navigator>
   )
@@ -22,7 +22,7 @@ const MusicScreenStackNavigator = () => {
 
 const ExploreScreenStackNavigator = () => {
   return (
-    <ExploreScreenStack.Navigator>
+    <ExploreScreenStack.Navigator headerMode='none'>
       <ExploreScreenStack.Screen name='Explore' component={ExploreScreen} />
     </ExploreScreenStack.Navigator>
   )
@@ -30,7 +30,7 @@ const ExploreScreenStackNavigator = () => {
 
 const AccountScreenStackNavigator = () => {
   return (
-    <AccountScreenStack.Navigator>
+    <AccountScreenStack.Navigator headerMode='none'>
       <AccountScreenStack.Screen name='Account' component={AccountScreen} />
     </AccountScreenStack.Navigator>
   )

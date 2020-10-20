@@ -1,11 +1,15 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
+import auth from '@react-native-firebase/auth';
+import { useSelector } from 'react-redux';
 
 import formStyles from '../styles/FormStyles';
 
 
 const LoginScreen = ({navigation}) => {
+    const user = useSelector(state => state.user);
+
     const emailRef = useRef();
     const passwordRef = useRef();
     const [email, setEmail] = useState('');
@@ -29,9 +33,18 @@ const LoginScreen = ({navigation}) => {
         errors.email.valid && errors.password.valid ? setFormIsValid(true) : setFormIsValid(false);
     }, [email, password]);
 
-    const login = () => {
-        console.log(email);
-        console.log(password);
+    useEffect(() => {
+        if(user) {
+            
+        }
+    }, [user]);
+
+    const login = async () => {
+
+        await auth().signInWithEmailAndPassword(email, password).then(() => {
+            // navigation.navigate('Register');
+            navigation.navigate('Tabs', { screen: 'Music' });
+        })
     }
     
     return (
