@@ -11,8 +11,19 @@ import MainStackNavigator from './navigation/MainStackNavigation';
 import rootReducer from './Reducers';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux'
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
 const App = () => {
+  const theme = {
+    ...DefaultTheme,
+    roundness: 2,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#3498db',
+      accent: '#f1c40f',
+    },
+  };
+
   const store = createStore(rootReducer);
 
   const [isReady, setIsReady] = useState(false);
@@ -26,19 +37,21 @@ const App = () => {
   }, []);
 
   return (
-    <Provider store={store}>
-        {isReady ?
-          <PlayerContextProvider>
-            <NavigationContainer>
-              <MainStackNavigator />
-            </NavigationContainer>
-          </PlayerContextProvider>
-          : (
-            <Box f={1} center>
-              <ActivityIndicator />
-            </Box>
-          )}
-    </Provider>
+    <PaperProvider theme={theme}>
+      <Provider store={store}>
+          {isReady ?
+            <PlayerContextProvider>
+              <NavigationContainer>
+                <MainStackNavigator />
+              </NavigationContainer>
+            </PlayerContextProvider>
+            : (
+              <Box f={1} center>
+                <ActivityIndicator />
+              </Box>
+            )}
+      </Provider>
+    </PaperProvider>
   );
 }
 

@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
 
 import MusicScreen from '../screens/Music';
 import ExploreScreen from '../screens/Explore';
 import AccountScreen from '../screens/Account';
-import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
 import MiniPlayer from '../components/MiniPlayer';
 
 const MusicScreenStack = createStackNavigator();
