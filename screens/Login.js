@@ -56,9 +56,9 @@ const LoginScreen = ({navigation}) => {
                 </Button>
             </View>
             <View style={styles.registerLinkContainer}>
-                <Text>Dont have an accout? Register... </Text>
+                <Text style={styles.registerText}>Dont have an accout?.....</Text>
                 <Button style={styles.registerLink} mode="text" onPress={() => navigation.navigate('Register')}>
-                    here
+                    register
                 </Button>  
             </View>
         </View>

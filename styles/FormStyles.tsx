@@ -1,6 +1,6 @@
 const formStyles = {
     formContainer: {
-
+        flex: 1
     },
     registerLinkContainer: {
         flex: 1,
@@ -10,7 +10,7 @@ const formStyles = {
         marginTop: 20,
     },
     registerText: {
-
+        fontSize: 16
     },
     registerLink: {
 
