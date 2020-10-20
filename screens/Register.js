@@ -60,16 +60,13 @@ const RegisterScreen = ({ navigation }) => {
     }
 
     const register = async () => {
-
         auth().createUserWithEmailAndPassword(email, password).then(() => {
             navigation.navigate('Music');
+        }).catch(error => {
+            if (error.code === 'auth/email-already-in-use') {
+                alert('Email address already in use!');
+            }
         });
-
-        // console.log(artistName);
-        // console.log(email);
-        // console.log(password);
-        // console.log(artistImage);
-        // console.log(bio);
     }
 
     return (
@@ -97,6 +94,7 @@ const RegisterScreen = ({ navigation }) => {
                             label="Password"
                             value={password}
                             onChangeText={password => setPassword(password)}
+                            secureTextEntry={true}
                         />
                         <TextInput
                             style={styles.input}

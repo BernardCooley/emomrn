@@ -40,11 +40,17 @@ const LoginScreen = ({navigation}) => {
     }, [user]);
 
     const login = async () => {
-
         await auth().signInWithEmailAndPassword(email, password).then(() => {
-            // navigation.navigate('Register');
             navigation.navigate('Tabs', { screen: 'Music' });
-        })
+        }).catch(error => {
+            if (error.code === 'auth/email-already-in-use') {
+                alert('Email address already in use!');
+            }
+
+            if (error.code === 'auth/user-not-found') {
+                alert('Email and/or password incorrect. Please try again');
+            }
+        });
     }
     
     return (
@@ -63,6 +69,7 @@ const LoginScreen = ({navigation}) => {
                     label="Password"
                     value={password}
                     onChangeText={password => setPassword(password)}
+                    secureTextEntry={true}
                 />
                 <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={login}>
                     Log in
