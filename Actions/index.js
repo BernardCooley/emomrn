@@ -25,3 +25,10 @@ export const artistProfileId = id => {
         payload: id
     };
 };
+
+export const artists = artists => {
+    return {
+        type: 'ARTISTS',
+        payload: artists
+    };
+};

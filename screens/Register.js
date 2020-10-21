@@ -3,11 +3,15 @@ import { StyleSheet, View, SafeAreaView, ScrollView, Image } from 'react-native'
 import { TextInput, Button, Text, Avatar, IconButton, Snackbar } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import { utils } from '@react-native-firebase/app';
 
 import formStyles from '../styles/FormStyles';
 
 
 const RegisterScreen = ({ navigation }) => {
+    const storageRef = storage().ref('');
     const [artistName, setArtistName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -60,9 +64,61 @@ const RegisterScreen = ({ navigation }) => {
         setArtistImage({});
     }
 
+    const printData = () => {
+        console.log(artistImage);
+        console.log(utils.FilePath.DUCUMENTS_DIRECTORY);
+    }
+
     const register = async () => {
-        auth().createUserWithEmailAndPassword(email, password).then(() => {
-            navigation.navigate('Music');
+        auth().createUserWithEmailAndPassword(email, password).then(async newUserData => {
+            await firestore().collection('users').doc(newUserData.user.uid).set({
+                userId: newUserData.user.uid,
+                artistName: artistName,
+                bio: bio
+            }).then(async () => {
+                const { uri } = artistImage.uri;
+                const filename = uri.substring(uri.lastIndexOf('/') + 1);
+
+                const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri.replace('content://', '');
+
+                const task = storage()
+                    .ref(filename)
+                    .putFile(uploadUri)
+
+                task.then(() => {
+                    navigation.navigate('Explore');
+                })
+
+
+
+
+
+                // const directory = 'bandImages';
+                // const pathToFile = `${utils.FilePath.directory}/${newUserData.user.uid}.png`;
+                // const imageUpload = storage().ref(`bandImages/${newUserData.user.uid}.png`);
+
+                // await imageUpload.put(pathToFile).then(() => {
+                //     navigation.navigate('Explore');
+                // });
+            });
+
+            const ggg = {
+                "additionalUserInfo": {
+                    "isNewUser": true
+                },
+                "user": {
+                    "displayName": null,
+                    "email": "ber1@cool.com",
+                    "emailVerified": false,
+                    "isAnonymous": false,
+                    "metadata": [Object],
+                    "phoneNumber": null,
+                    "photoURL": null,
+                    "providerData": [Array],
+                    "providerId": "firebase",
+                    "uid": "MmcGlCfO2nQtKiNRaz0mGXspsKU2"
+                }
+            }
         }).catch(error => {
             if (error.code === 'auth/email-already-in-use') {
                 setSnackBarMessage('Email address already in use! Are you already registered?')
@@ -124,6 +180,9 @@ const RegisterScreen = ({ navigation }) => {
                         </Button>
                         </View>
                     </View>
+                    <Button mode="contained" onPress={printData}>
+                        print data
+            </Button>
                 </ScrollView>
             </SafeAreaView>
             <Snackbar

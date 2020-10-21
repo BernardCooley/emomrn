@@ -6,6 +6,14 @@ const musicReducers = {
             default:
                 return state;
         }
+    },
+    artists: (state = [], action) => {
+        switch (action.type) {
+            case 'ARTISTS':
+                return state = action.payload;
+            default:
+                return state;
+        }
     }
 }
 
