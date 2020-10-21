@@ -44,7 +44,7 @@ const Main = () => {
     }
 
     const onError = (error: any) => {
-        alert(error);
+        console.log(error);
     }
 
     const onAuthStateChanged = (loggedInUser) => {
