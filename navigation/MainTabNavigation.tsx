@@ -48,21 +48,21 @@ const MainTabNavigator = () => {
         </>
       )}>
       <MainTab.Screen
-        name="Music"
-        component={MusicScreenStackNavigator}
-        options={{
-          tabBarLabel: 'Music',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="music" color={color} size={26} />
-          ),
-        }} />
-      <MainTab.Screen
         name="Explore"
         component={ExploreScreenStackNavigator}
         options={{
           tabBarLabel: 'Explore',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="music-box-multiple" color={color} size={26} />
+          ),
+        }} />
+        <MainTab.Screen
+        name="Music"
+        component={MusicScreenStackNavigator}
+        options={{
+          tabBarLabel: 'Music',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="music" color={color} size={26} />
           ),
         }} />
       <MainTab.Screen

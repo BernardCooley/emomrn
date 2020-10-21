@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, SafeAreaView, FlatList, View } from 'react-native';
 import { Card, Title, Chip, Text } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { artistProfileId } from '../Actions/index';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
 import ArtistProfileScreen from '../screens/ArtistProfile';
 
@@ -64,8 +66,13 @@ const DATA = [
 ];
 
 const ArtistsScreen = ({ navigation }) => {
+    const usersCollection = firestore().collection('users');
     const dispatch = useDispatch();
     const profileId = useSelector(state => state.artistProfileId);
+
+    useEffect(() => {
+        console.log('Artist page loaded');
+    }, []);
 
     const viewArtistProfile = artistId => {
         dispatch(artistProfileId(artistId));
