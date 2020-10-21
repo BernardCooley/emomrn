@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, SafeAreaView, ScrollView, Image } from 'react-native';
-import { TextInput, Button, Text, Avatar, IconButton } from 'react-native-paper';
+import { TextInput, Button, Text, Avatar, IconButton, Snackbar } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import auth from '@react-native-firebase/auth';
 
@@ -15,6 +15,7 @@ const RegisterScreen = ({ navigation }) => {
     const [bio, setBio] = useState('');
 
     const [formIsValid, setFormIsValid] = useState(false);
+    const [snackBarMessage, setSnackBarMessage] = useState('');
 
     const errors = {
         artistName: {
@@ -64,66 +65,79 @@ const RegisterScreen = ({ navigation }) => {
             navigation.navigate('Music');
         }).catch(error => {
             if (error.code === 'auth/email-already-in-use') {
-                alert('Email address already in use!');
+                setSnackBarMessage('Email address already in use! Are you already registered?')
             }
         });
     }
 
     return (
-        <SafeAreaView>
-            <ScrollView style={styles.scrollView} contentContainerStyle={{
-                flexGrow: 1,
-                justifyContent: 'space-between'
-            }}>
-                <View style={styles.container}>
-                    <View style={styles.formContainer}>
-                        <TextInput
-                            style={styles.input}
-                            label="Artist name"
-                            value={artistName}
-                            onChangeText={artistName => setArtistName(artistName)}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            label="Email"
-                            value={email}
-                            onChangeText={email => setEmail(email)}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            label="Password"
-                            value={password}
-                            onChangeText={password => setPassword(password)}
-                            secureTextEntry={true}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            label="Bio (optional)"
-                            value={bio}
-                            onChangeText={bio => setBio(bio)}
-                            multiline
-                        />
-                        <Text style={styles.artistImageLabel}>Artist image (optional)</Text>
-                        {artistImage.uri ?
-                            <View style={styles.artistImageContainer}>
-                                <Avatar.Image style={styles.artistImage} size={300} source={{ uri: artistImage.uri }} />
-                                <Text onPress={removeImage} style={styles.deleteImageButton}>delete</Text>
-                            </View> :
-                            <IconButton style={styles.uploadButton} animated icon="camera" size={30} onPress={lauchFileUploader}/>
-                        }
-                        <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={register}>
-                            Register
+        <>
+            <SafeAreaView>
+                <ScrollView style={styles.scrollView} contentContainerStyle={{
+                    flexGrow: 1,
+                    justifyContent: 'space-between'
+                }}>
+                    <View style={styles.container}>
+                        <View style={styles.formContainer}>
+                            <TextInput
+                                style={styles.input}
+                                label="Artist name"
+                                value={artistName}
+                                onChangeText={artistName => setArtistName(artistName)}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                label="Email"
+                                value={email}
+                                onChangeText={email => setEmail(email)}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                label="Password"
+                                value={password}
+                                onChangeText={password => setPassword(password)}
+                                secureTextEntry={true}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                label="Bio (optional)"
+                                value={bio}
+                                onChangeText={bio => setBio(bio)}
+                                multiline
+                            />
+                            <Text style={styles.artistImageLabel}>Artist image (optional)</Text>
+                            {artistImage.uri ?
+                                <View style={styles.artistImageContainer}>
+                                    <Avatar.Image style={styles.artistImage} size={300} source={{ uri: artistImage.uri }} />
+                                    <Text onPress={removeImage} style={styles.deleteImageButton}>delete</Text>
+                                </View> :
+                                <IconButton style={styles.uploadButton} animated icon="camera" size={30} onPress={lauchFileUploader} />
+                            }
+                            <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={register}>
+                                Register
                         </Button>
-                    </View>
-                    <View style={styles.registerLinkContainer}>
-                        <Text style={styles.registerText}>Already registered?.....</Text>
-                        <Button style={styles.registerLink} mode="text" onPress={() => navigation.navigate('Login')}>
-                            log in
+                        </View>
+                        <View style={styles.registerLinkContainer}>
+                            <Text style={styles.registerText}>Already registered?.....</Text>
+                            <Button style={styles.registerLink} mode="text" onPress={() => navigation.navigate('Login')}>
+                                log in
                         </Button>
+                        </View>
                     </View>
-                </View>
-            </ScrollView>
-        </SafeAreaView>
+                </ScrollView>
+            </SafeAreaView>
+            <Snackbar
+                visible={snackBarMessage.length > 0}
+                onDismiss={() => setSnackBarMessage('')}
+                action={{
+                    label: 'Yes',
+                    onPress: () => {
+                        navigation.navigate('Login');
+                    },
+                }}>
+                {snackBarMessage}
+            </Snackbar>
+        </>
     );
 }
 
