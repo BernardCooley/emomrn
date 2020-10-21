@@ -11,3 +11,10 @@ export const user = user => {
         payload: user
     };
 };
+
+export const tracks = tracks => {
+    return {
+        type: 'TRACKS',
+        payload: tracks
+    };
+};
