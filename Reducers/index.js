@@ -6,7 +6,8 @@ import { combineReducers } from 'redux';
 const allReducers = combineReducers({
     currentScreen: screenReducers.currentScreen,
     user: authReducers.user,
-    tracks: musicReducers.tracks
+    tracks: musicReducers.tracks,
+    artistProfileId: screenReducers.artistProfileId
 });
 
 const rootReducer = (state, action) => {

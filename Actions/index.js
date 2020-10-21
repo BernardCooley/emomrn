@@ -18,3 +18,10 @@ export const tracks = tracks => {
         payload: tracks
     };
 };
+
+export const artistProfileId = id => {
+    return {
+        type: 'ARTIST_PROFILE_ID',
+        payload: id
+    };
+};

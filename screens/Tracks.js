@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, SafeAreaView, FlatList } from 'react-native';
 import { Text } from 'react-native-paper';
-import { Avatar, IconButton, List } from 'react-native-paper';
+import { Avatar, IconButton, List, Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { usePlayerContext } from '../contexts/PlayerContext';
 import storage from '@react-native-firebase/storage';
@@ -33,26 +33,29 @@ const TracksScreen = ({navigation}) => {
     }
 
     const renderItem = ({ item }) => (
-        <List.Item
-            titleNumberOfLines={1}
-            descriptionNumberOfLines={1}
-            titleEllipsizeMode='tail'
-            descriptionEllipsizeMode='tail'
-            titleStyle={{ fontSize: 16 }}
-            descriptionStyle={{ fontSize: 24 }}
-            style={styles.listItem}
-            title={item.artist}
-            description={item.title}
-            left={() =>
-                <Avatar.Image size={60} source={{
-                    uri: item.trackImage
-                }} />
-            }
-            right={() =>
-                <IconButton style={styles.menuIcon} animated icon="dots-vertical" size={30} onPress={openMenu} />
-            }
-            onPress={() => playTrack(item)}
-        />
+        <>
+            <List.Item
+                titleNumberOfLines={1}
+                descriptionNumberOfLines={1}
+                titleEllipsizeMode='tail'
+                descriptionEllipsizeMode='tail'
+                titleStyle={{ fontSize: 16 }}
+                descriptionStyle={{ fontSize: 24 }}
+                style={styles.listItem}
+                title={item.artist}
+                description={item.title}
+                left={() =>
+                    <Avatar.Image size={60} source={{
+                        uri: item.trackImage
+                    }} />
+                }
+                right={() =>
+                    <IconButton style={styles.menuIcon} animated icon="dots-vertical" size={30} onPress={openMenu} />
+                }
+                onPress={() => playTrack(item)}
+            />
+            <Divider />
+        </>
     );
     return (
         <SafeAreaView style={styles.container}>
