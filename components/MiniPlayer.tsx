@@ -1,9 +1,11 @@
 import React from 'react';
-import { Box, Text, Image } from 'react-native-design-utility';
+import { StyleSheet } from 'react-native';
+import { Box, Text } from 'react-native-design-utility';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { usePlayerContext } from '../contexts/PlayerContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
+import { Avatar } from 'react-native-paper';
 
 const MiniPlayer = () => {
     const currentScreen = useSelector(state => state.currentScreen);
@@ -14,18 +16,14 @@ const MiniPlayer = () => {
     }
 
     return (
-        <Box h={75} bg='white' px='sm'>
-            <Box f={1} dir='row' align='center' justify='between'>
-                <Box 
-                    h={50} 
-                    w={50} 
-                    bg='lightblue' 
-                    radius={10} 
-                    mr={10}
-                    style={{overflow: 'hidden'}}>
-                </Box>
-                <Box f={1}>
-                    <Text>This is the title</Text>
+        <Box style={styles.outerBox} px='sm'>
+            <Box style={styles.innerBox}>
+                <Avatar.Image style={styles.avatar} size={40} source={{
+                    uri: playerContext.currentTrack.trackImage
+                }} />
+                <Box style={styles.titleArtistBox}>
+                    <Text>{playerContext.currentTrack.artist}</Text>
+                    <Text>{playerContext.currentTrack.title}</Text>
                 </Box>
                 <Box>
                     {playerContext.isPaused && 
@@ -48,5 +46,24 @@ const MiniPlayer = () => {
         </Box>
     )
 }
+
+const styles = StyleSheet.create({
+    outerBox: {
+        height: 75,
+        backgroundColor:'white'
+    },
+    innerBox: {
+        flex:1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    titleArtistBox: {
+        flex: 1
+    },
+    avatar: {
+        marginRight: 10
+    }
+});
 
 export default MiniPlayer;

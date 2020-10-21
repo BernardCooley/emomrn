@@ -7,36 +7,48 @@ import { Box } from 'react-native-design-utility';
 import { ActivityIndicator } from 'react-native-paper';
 import { PlayerContextProvider } from '../contexts/PlayerContext';
 import MainStackNavigator from '../navigation/MainStackNavigation';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import auth from '@react-native-firebase/auth';
-import { user } from '../Actions/index';
+import { user, tracks } from '../Actions/index';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
 const Main = () => {
+    let allTracks = useSelector(state => state.tracks);
     const dispatch = useDispatch();
 
     const [isReady, setIsReady] = useState(false);
+    const tracksCollection = firestore().collection('tracks');
 
     useEffect(() => {
         TrackPlayer.setupPlayer().then(() => {
             TrackPlayer.registerPlaybackService(() => TrackPlayerServices);
             setIsReady(true);
-            console.log('ready--------------------');
         });
     }, []);
 
     useEffect(() => {
-      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-      return subscriber;
+        auth().onAuthStateChanged(onAuthStateChanged);
+        tracksCollection.onSnapshot(onResult, onError);
     }, []);
+
+    const onResult = (QuerySnapshot: any) => {
+        allTracks = [];
+        QuerySnapshot.docs.map(async(data: { data: () => any; }) => {
+            const trackData = data.data();
+            await storage().ref(`trackImages/${trackData.id}.jpg`).getDownloadURL().then(url => {
+                trackData['trackImage'] = url;
+                dispatch(tracks([...allTracks, trackData]));
+            });
+        });
+    }
+
+    const onError = (error: any) => {
+        alert(error);
+    }
 
     const onAuthStateChanged = (loggedInUser) => {
         dispatch(user(loggedInUser));
-
-        
-
-        console.log('---------------------------------------------');
-        console.log(loggedInUser);
-        console.log('---------------------------------------------');
     }
 
     return (
