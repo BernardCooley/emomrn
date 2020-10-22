@@ -1,14 +1,37 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, FlatList } from 'react-native';
+import { StyleSheet, SafeAreaView, FlatList, BackHandler, Alert } from 'react-native';
 import { Avatar, IconButton, List, Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { usePlayerContext } from '../contexts/PlayerContext';
 import storage from '@react-native-firebase/storage';
+import { useFocusEffect } from "@react-navigation/native";
 
 
 const TracksScreen = ({ navigation }) => {
     const playerContext = usePlayerContext();
     let allTracks = useSelector(state => state.tracks);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+                    {
+                        text: "Cancel",
+                        onPress: () => null,
+                        style: "cancel"
+                    },
+                    { text: "YES", onPress: () => BackHandler.exitApp() }
+                ]);
+                return true;
+            };
+
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+
+        }, [])
+    );
 
     const openMenu = () => {
         alert('menu');
