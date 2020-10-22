@@ -1,24 +1,44 @@
 import React from 'react';
-import { StyleSheet, View, SafeAreaView, FlatList } from 'react-native';
-import { Text } from 'react-native-paper';
+import { StyleSheet, SafeAreaView, FlatList } from 'react-native';
 import { Avatar, IconButton, List, Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { usePlayerContext } from '../contexts/PlayerContext';
 import storage from '@react-native-firebase/storage';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useFocusEffect } from '@react-navigation/native';
+import { tracks } from '../Actions/index';
+import firestore from '@react-native-firebase/firestore';
+import { useDispatch } from 'react-redux';
 
-const DATA = [
-    {
-        album: 'Wave function EP', artist: 'Tape Twelve Tape Twelve Tape Twelve Tape Twelve', description: 'Good track', duration: 300, genre: 'Electro', id: 'ds5MaDn5ewxxvV0CK9GG', releaseDate: '6 October 2020 00:00:00 UTC+1', title: 'Wave function Wave function Wave function', trackImage: 'gs://emom-84ee4.appspot.com/trackImages/ds5MaDn5ewxxvV0CK9GG.jpg'
-    },
-    {
-        album: 'Wave function EP', artist: 'Tape Twelve', description: 'Good track', duration: 300, genre: 'Electro', id: 'ds5MaDn5ewxxvV0CK9GG', releaseDate: '6 October 2020 00:00:00 UTC+1', title: 'Wave function', trackImage: 'gs://emom-84ee4.appspot.com/trackImages/ds5MaDn5ewxxvV0CK9GG.jpg'
-    }
-];
 
-const TracksScreen = ({navigation}) => {
+const TracksScreen = ({ navigation }) => {
+    const dispatch = useDispatch();
     const playerContext = usePlayerContext();
     let allTracks = useSelector(state => state.tracks);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const getTracks = async () => {
+                await firestore().collection('tracks').get().then(querySnapshot => {
+                    dispatch(tracks(querySnapshot.docs.map(async doc => {
+                        const trackData = doc.data();
+                        return await storage().ref(`/trackImages/${trackData.id}.jpg`).getDownloadURL().then(url => {
+                            console.log(url);
+                            
+                            trackData['trackImage'] = url;
+                            console.log(trackData);
+                            
+                            return trackData;
+                        });
+                    })));
+                }).catch(error => {
+                    console.log(error);
+                })
+            }
+            getTracks();
+        }, [])
+
+
+    );
 
     const openMenu = () => {
         alert('menu');
@@ -62,9 +82,9 @@ const TracksScreen = ({navigation}) => {
             <FlatList
                 data={allTracks}
                 renderItem={renderItem}
-                keyExtractor={track => track.id}/>
+                keyExtractor={track => track.id} />
         </SafeAreaView>
-      );
+    );
 }
 
 const styles = StyleSheet.create({
