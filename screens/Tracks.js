@@ -4,41 +4,11 @@ import { Avatar, IconButton, List, Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { usePlayerContext } from '../contexts/PlayerContext';
 import storage from '@react-native-firebase/storage';
-import { useFocusEffect } from '@react-navigation/native';
-import { tracks } from '../Actions/index';
-import firestore from '@react-native-firebase/firestore';
-import { useDispatch } from 'react-redux';
 
 
 const TracksScreen = ({ navigation }) => {
-    const dispatch = useDispatch();
     const playerContext = usePlayerContext();
     let allTracks = useSelector(state => state.tracks);
-
-    useFocusEffect(
-        React.useCallback(() => {
-            const getTracks = async () => {
-                await firestore().collection('tracks').get().then(querySnapshot => {
-                    dispatch(tracks(querySnapshot.docs.map(async doc => {
-                        const trackData = doc.data();
-                        return await storage().ref(`/trackImages/${trackData.id}.jpg`).getDownloadURL().then(url => {
-                            console.log(url);
-                            
-                            trackData['trackImage'] = url;
-                            console.log(trackData);
-                            
-                            return trackData;
-                        });
-                    })));
-                }).catch(error => {
-                    console.log(error);
-                })
-            }
-            getTracks();
-        }, [])
-
-
-    );
 
     const openMenu = () => {
         alert('menu');
