@@ -35,7 +35,7 @@ const TracksScreen = ({ navigation }) => {
         <>
             {allTracks &&
                 <SafeAreaView style={styles.container}>
-                    <TracksList tracks={allTracks} />
+                    <TracksList tracks={allTracks} navigation={navigation} />
                 </SafeAreaView>
             }
         </>
@@ -43,7 +43,8 @@ const TracksScreen = ({ navigation }) => {
 }
 
 TracksScreen.propTypes = {
-    tracks: PropTypes.object
+    tracks: PropTypes.object,
+    navigation: PropTypes.object
 }
 
 const styles = StyleSheet.create({

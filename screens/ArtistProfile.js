@@ -28,7 +28,7 @@ const ArtistProfileScreen = ({ navigation }) => {
     }, [currentProfile]);
 
     const backToArtists = () => {
-        navigation.navigate('Artists');
+        navigation.navigate('Tabs', { screen: 'Music' });
         dispatch(artistProfileId(''));
     }
 
@@ -71,7 +71,7 @@ const ArtistProfileScreen = ({ navigation }) => {
                     </ScrollView>
                     <Subheading style={styles.tracksDetail}>Tracks</Subheading>
                         {currentProfileTracks.length > 0 ? 
-                            <TracksList tracks={currentProfileTracks} /> :
+                            <TracksList tracks={currentProfileTracks} navigation={navigation} /> :
                             <Text style={styles.tracksDetail}>None</Text> 
                         }
                 </SafeAreaView>
@@ -81,7 +81,8 @@ const ArtistProfileScreen = ({ navigation }) => {
 }
 
 ArtistProfileScreen.propTypes = {
-    tracks: PropTypes.object
+    tracks: PropTypes.object,
+    navigation: PropTypes.object
 }
 
 const styles = StyleSheet.create({
