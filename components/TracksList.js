@@ -3,9 +3,12 @@ import { StyleSheet, FlatList } from 'react-native';
 import { Avatar, IconButton, List, Divider, Menu } from 'react-native-paper';
 import { usePlayerContext } from '../contexts/PlayerContext';
 import storage from '@react-native-firebase/storage';
+import { useDispatch } from 'react-redux';
+import { artistProfileId } from '../Actions/index';
 
 
 const TracksList = ({ navigation, tracks }) => {
+    const dispatch = useDispatch();
     const playerContext = usePlayerContext();
     const [showMenu, setShowMenu] = useState(false);
     const [menuLocation, setMenuLocation] = useState({});
@@ -35,6 +38,12 @@ const TracksList = ({ navigation, tracks }) => {
             playerContext.play(clickedTrack, true);
             navigation.navigate('Tabs', { screen: 'Music' });
         });
+    }
+
+    const artistProfile = () => {
+        setShowMenu(false);
+        dispatch(artistProfileId(clickedTrack.artistId));
+        navigation.navigate('Profile');
     }
 
     const closeMenu = () => {
@@ -72,7 +81,7 @@ const TracksList = ({ navigation, tracks }) => {
                 anchor={menuLocation}>
                 <Menu.Item onPress={() => queueTrack()} icon="plus-box-multiple" title="Queue track" />
                 <Divider />
-                <Menu.Item onPress={() => { }}  icon="account-box" title="Artist profile" />
+                <Menu.Item onPress={() => artistProfile()}  icon="account-box" title="Artist profile" />
             </Menu>
             <FlatList
                 data={tracks}

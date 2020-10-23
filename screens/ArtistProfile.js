@@ -19,12 +19,14 @@ const ArtistProfileScreen = ({ navigation }) => {
         if (currentprofileId.length > 0) {
             firestore().collection('users').doc(currentprofileId).get().then(response => {
                 setCurrentProfile(response.data());
-            });
+            })
         }
     }, [currentprofileId]);
 
     useEffect(() => {
-        setCurrentProfileTracks(allTracks.filter(track => track.artistId === currentProfile.userId));
+        if(currentProfile) {
+            setCurrentProfileTracks(allTracks.filter(track => track.artistId === currentProfile.userId));
+        }
     }, [currentProfile]);
 
     const backToArtists = () => {
@@ -34,7 +36,7 @@ const ArtistProfileScreen = ({ navigation }) => {
 
     return (
         <>
-            {currentProfile &&
+            {currentProfile ?
                 <SafeAreaView>
                     <ScrollView style={styles.scrollView} contentContainerStyle={{
                         flexGrow: 1,
@@ -74,7 +76,10 @@ const ArtistProfileScreen = ({ navigation }) => {
                             <TracksList tracks={currentProfileTracks} navigation={navigation} /> :
                             <Text style={styles.tracksDetail}>None</Text> 
                         }
-                </SafeAreaView>
+                </SafeAreaView>:
+                <View>
+                <Text>No profile. Redirect back to tracks and alert</Text>
+                </View>
             }
         </>
     );
