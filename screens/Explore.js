@@ -22,7 +22,6 @@ const ExploreScreen = ({ navigation }) => {
 
     useEffect(() => {
         getTrackImages();
-        console.log('+++++++++++++++++++++++')
     }, [tracksTemp]);
 
     const getTracks = async QuerySnapshot => {
@@ -45,15 +44,18 @@ const ExploreScreen = ({ navigation }) => {
             if (index === tracksTemp.length - 1) {
                 dispatch(tracks(tr));
             }
-        })
-
-        
+        })  
     }
 
     const getArtists = QuerySnapshot => {
         dispatch(artists(QuerySnapshot.docs.map(data => {
             const artistData = data.data();
-            artistData['trackAmount'] = allTracks.length > 0 ? allTracks.filter(track => track.artistId === artistData.userId).length : 0;
+            
+            if(allTracks.length > 0) {
+                artistData['trackAmount'] = allTracks.filter(track => track.artistId === artistData.userId).length;
+            }else {
+                artistData['trackAmount'] = 0;
+            }
             return artistData;
         })));
     }

@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import MainTabNavigator from './MainTabNavigation';
 import LoginScreen from '../screens/Login';
 import RegisterScreen from '../screens/Register';
+import ArtistProfileScreen from '../screens/ArtistProfile';
 
 const MainStack = createStackNavigator();
 
@@ -14,6 +15,7 @@ const MainStackNavigator = () => {
             <MainStack.Screen name='Login' component={LoginScreen} />
             <MainStack.Screen name='Register' component={RegisterScreen} />
             <MainStack.Screen name='Tabs' component={MainTabNavigator} />
+            <MainStack.Screen name="Profile" component={ArtistProfileScreen} />
         </MainStack.Navigator>
     )
 }

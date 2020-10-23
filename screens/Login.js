@@ -32,7 +32,7 @@ const LoginScreen = ({ navigation }) => {
         if (auth().currentUser) {
             setShowLogin(false);
             navigation.navigate('Tabs', { screen: 'Explore' });
-        }else {
+        } else {
             setShowLogin(true);
         }
     }, []);
@@ -63,7 +63,7 @@ const LoginScreen = ({ navigation }) => {
 
     return (
         <>
-            {showLogin ?
+            {showLogin &&
                 <>
                     <View style={styles.container}>
                         <View style={styles.formContainer}>
@@ -84,13 +84,13 @@ const LoginScreen = ({ navigation }) => {
                             />
                             <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={login}>
                                 Log in
-                </Button>
+                            </Button>
                         </View>
                         <View style={styles.registerLinkContainer}>
                             <Text style={styles.registerText}>Dont have an accout?.....</Text>
                             <Button style={styles.registerLink} mode="text" onPress={() => navigation.navigate('Register')}>
                                 register
-                </Button>
+                            </Button>
                         </View>
                     </View>
                     <Snackbar
@@ -98,8 +98,7 @@ const LoginScreen = ({ navigation }) => {
                         onDismiss={() => setSnackBarMessage('')}>
                         {snackBarMessage}
                     </Snackbar>
-                </> :
-                null
+                </>
             }
         </>
     );

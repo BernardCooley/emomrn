@@ -158,7 +158,7 @@ const RegisterScreen = ({ navigation }) => {
                 </Box> :
                 <>
                     <SafeAreaView>
-                        <ScrollView style={styles.scrollView} contentContainerStyle={{
+                        <ScrollView contentContainerStyle={{
                             flexGrow: 1,
                             justifyContent: 'space-between'
                         }}>
@@ -200,7 +200,7 @@ const RegisterScreen = ({ navigation }) => {
                                     }
                                     <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={register}>
                                         Register
-        </Button>
+                                    </Button>
                                 </View>
                                 <View style={styles.registerLinkContainer}>
                                     <Text style={styles.registerText}>Already registered?.....</Text>
@@ -227,9 +227,6 @@ const RegisterScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     ...formStyles,
-    scrollView: {
-
-    },
     artistImageContainer: {
         marginTop: 20,
         flex: 1,

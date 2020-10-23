@@ -4,15 +4,13 @@ import { Card, Title, Chip } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { artistProfileId } from '../Actions/index';
 
-import ArtistProfileScreen from '../screens/ArtistProfile';
-
 const ArtistsScreen = ({ navigation }) => {
     const dispatch = useDispatch();
-    const profileId = useSelector(state => state.artistProfileId);
-    let allArtists = useSelector(state => state.artists);
+    const allArtists = useSelector(state => state.artists);
 
     const viewArtistProfile = artistId => {
         dispatch(artistProfileId(artistId));
+        navigation.navigate('Profile');
     }
 
     const viewArtistTracks = artistId => {
@@ -20,7 +18,7 @@ const ArtistsScreen = ({ navigation }) => {
     }
 
     const renderItem = ({ item }) => (
-        <Card style={styles.card} elevation={10} onPress={() => viewArtistProfile(item.userId)}>
+        <Card style={styles.card} onPress={() => viewArtistProfile(item.userId)}>
             <Chip style={styles.chip} icon="music-box-multiple" onPress={() => viewArtistTracks(item.userId)}>{item.trackAmount}</Chip>
             <Card.Cover style={styles.cardCover} source={{ uri: item.artistImageUrl }} />
             <Title style={styles.cardTitle}>{item.artistName}</Title>
@@ -29,19 +27,15 @@ const ArtistsScreen = ({ navigation }) => {
 
     return (
         <>
-            {profileId.length > 0 ?
-                <ArtistProfileScreen />
-                :
-                <SafeAreaView style={styles.artistsContainer}>
-                    <FlatList
-                        style={styles.listContainer}
-                        data={allArtists}
-                        renderItem={renderItem}
-                        keyExtractor={track => track.id}
-                        numColumns={2}
-                    />
-                </SafeAreaView>
-            }
+            <SafeAreaView style={styles.artistsContainer}>
+                <FlatList
+                    style={styles.listContainer}
+                    data={allArtists}
+                    renderItem={renderItem}
+                    keyExtractor={track => track.id}
+                    numColumns={2}
+                />
+            </SafeAreaView>
         </>
     );
 }
