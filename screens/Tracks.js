@@ -14,7 +14,7 @@ const TracksScreen = ({ navigation }) => {
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+                Alert.alert("Exit app", "Are you sure you want to exit?", [
                     {
                         text: "Cancel",
                         onPress: () => null,

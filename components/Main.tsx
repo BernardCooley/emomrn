@@ -2,7 +2,6 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import TrackPlayerServices from '../service';
 import { Box } from 'react-native-design-utility';
 import { ActivityIndicator } from 'react-native-paper';
 import { PlayerContextProvider } from '../contexts/PlayerContext';
@@ -18,7 +17,21 @@ const Main = () => {
 
     useEffect(() => {
         TrackPlayer.setupPlayer().then(() => {
-            TrackPlayer.registerPlaybackService(() => TrackPlayerServices);
+            TrackPlayer.updateOptions({
+                stopWithApp: true,
+                capabilities: [
+                    TrackPlayer.CAPABILITY_PLAY,
+                    TrackPlayer.CAPABILITY_PAUSE,
+                    TrackPlayer.CAPABILITY_STOP,
+                    TrackPlayer.CAPABILITY_JUMP_FORWARD,
+                    TrackPlayer.CAPABILITY_JUMP_BACKWARD,
+                    TrackPlayer.CAPABILITY_SEEK_TO,
+                    TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+                    TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS
+                ],
+                jumpInterval: 30
+            })
+
             setIsReady(true);
         });
     }, []);
