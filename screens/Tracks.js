@@ -10,7 +10,7 @@ import useGetTracks from '../hooks/useGetTracks';
 
 const TracksScreen = ({ navigation }) => {
     const allTracks = useSelector(state => state.tracks);
-    const [error, getNextTracks] = useGetTracks('tracks', 'id', 20);
+    const [getTracks, error, getNextTracks] = useGetTracks('tracks', 'id', 20);
     const [refreshing, setRefreshing] = React.useState(false);
 
 
@@ -22,7 +22,7 @@ const TracksScreen = ({ navigation }) => {
 
     const refresh = () => {
         setRefreshing(true);
-        getNextTracks();
+        getTracks();
         wait(2000).then(() => setRefreshing(false));
     };
 

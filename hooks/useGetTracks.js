@@ -67,7 +67,7 @@ const useGetTracks = (collectionName, orderBy, limit) => {
         }
     };
 
-    return [error, getNextItems];
+    return [getData, error, getNextItems];
 }
 
 export default useGetTracks;
