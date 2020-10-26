@@ -69,9 +69,9 @@ const TracksList = ({ navigation, tracks }) => {
                                 <Avatar.Image style={styles.trackImage} size={50} source={{ uri: tracks[key].trackImage }} />
                             }
                             right={() =>
-                                <IconButton animated icon="dots-vertical" size={30} onPress={e => openMenu(e, item)} />
+                                <IconButton animated icon="dots-vertical" size={30} onPress={e => openMenu(e, tracks[key])} />
                             }
-                            onPress={() => playTrack(item)}
+                            onPress={() => playTrack(tracks[key])}
                         />
                         <Divider />
                     </View>
