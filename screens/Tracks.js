@@ -1,16 +1,33 @@
-import React from 'react';
-import { StyleSheet, SafeAreaView, BackHandler, Alert, ScrollView } from 'react-native';
+import React, { useCallback } from 'react';
+import { StyleSheet, SafeAreaView, BackHandler, Alert, ScrollView, RefreshControl } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from "@react-navigation/native";
 import TracksList from '../components/TracksList';
 import PropTypes from 'prop-types';
 
+import useGetTracks from '../hooks/useGetTracks';
+
 
 const TracksScreen = ({ navigation }) => {
     const allTracks = useSelector(state => state.tracks);
+    const [error, getNextTracks] = useGetTracks('tracks', 'id', 20);
+    const [refreshing, setRefreshing] = React.useState(false);
+
+
+    const wait = (timeout) => {
+        return new Promise(resolve => {
+            setTimeout(resolve, timeout);
+        });
+    }
+
+    const refresh = () => {
+        setRefreshing(true);
+        getNextTracks();
+        wait(2000).then(() => setRefreshing(false));
+    };
 
     useFocusEffect(
-        React.useCallback(() => {
+        useCallback(() => {
             const onBackPress = () => {
                 Alert.alert("Exit app", "Are you sure you want to exit?", [
                     {
@@ -35,10 +52,14 @@ const TracksScreen = ({ navigation }) => {
         <>
             {allTracks &&
                 <SafeAreaView style={styles.container}>
-                    <ScrollView style={styles.scrollView} contentContainerStyle={{
-                        flexGrow: 1,
-                        justifyContent: 'space-between'
-                    }}>
+                    <ScrollView
+                        refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+                        }
+                        style={styles.scrollView} contentContainerStyle={{
+                            flexGrow: 1,
+                            justifyContent: 'space-between'
+                        }}>
                         <TracksList tracks={allTracks} navigation={navigation} />
                     </ScrollView>
                 </SafeAreaView>
