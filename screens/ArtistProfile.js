@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, SafeAreaView, ScrollView, Linking } from 'react-native';
+import { StyleSheet, View, SafeAreaView, ScrollView } from 'react-native';
 import { Text, IconButton, Title, Divider, Avatar, Subheading } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import { artistProfileId } from '../Actions/index';
 import TracksList from '../components/TracksList';
 import PropTypes from 'prop-types';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import SocialLinks from '../components/SocialLinks';
 
 const ArtistProfileScreen = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -33,16 +33,6 @@ const ArtistProfileScreen = ({ navigation }) => {
     const backToArtists = () => {
         navigation.navigate('Tabs', { screen: 'Artists' });
         dispatch(artistProfileId(''));
-    }
-
-    const openUrl = url => {
-        Linking.canOpenURL(url).then(supported => {
-            if (supported) {
-                Linking.openURL(url);
-            } else {
-                console.log("Don't know how to open URI: " + url);
-            }
-        });
     }
 
     return (
@@ -76,25 +66,20 @@ const ArtistProfileScreen = ({ navigation }) => {
                             {currentProfile.socials && Object.keys(currentProfile.socials).length > 0 ?
                                 <>
                                     <Subheading style={styles.subHeading}>Socials</Subheading>
-                                    <View style={styles.socialLinks}>
-                                        {
-                                            Object.keys(currentProfile.socials).map((key, index) => (
-                                                <TouchableOpacity key={index} onPress={() => openUrl(currentProfile.socials[key])}>
-                                                    <IconButton animated icon={key} size={30} />
-                                                </TouchableOpacity>
-                                            ))
-                                        }
-                                    </View>
+                                    <SocialLinks socials={currentProfile.socials} />
                                     <Divider />
                                 </> : null
                             }
                         </View>
+                        <View>
+                            <Subheading style={styles.tracksDetail}>Tracks</Subheading>
+                            {currentProfileTracks.length > 0 ?
+                                <TracksList tracks={currentProfileTracks} navigation={navigation} /> :
+                                <Text style={styles.tracksDetail}>None</Text>
+                            }
+                        </View>
                     </ScrollView>
-                    <Subheading style={styles.tracksDetail}>Tracks</Subheading>
-                    {currentProfileTracks.length > 0 ?
-                        <TracksList tracks={currentProfileTracks} navigation={navigation} /> :
-                        <Text style={styles.tracksDetail}>None</Text>
-                    }
+
                 </SafeAreaView> :
                 <View>
                     <Text>No profile. Redirect back to tracks and alert</Text>
@@ -143,13 +128,6 @@ const styles = StyleSheet.create({
     detailText: {
         width: '100%',
         marginBottom: 15
-    },
-    socialLinks: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        width: '100%'
     }
 });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, BackHandler, Alert } from 'react-native';
+import { StyleSheet, SafeAreaView, BackHandler, Alert, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from "@react-navigation/native";
 import TracksList from '../components/TracksList';
@@ -35,7 +35,12 @@ const TracksScreen = ({ navigation }) => {
         <>
             {allTracks &&
                 <SafeAreaView style={styles.container}>
-                    <TracksList tracks={allTracks} navigation={navigation} />
+                    <ScrollView style={styles.scrollView} contentContainerStyle={{
+                        flexGrow: 1,
+                        justifyContent: 'space-between'
+                    }}>
+                        <TracksList tracks={allTracks} navigation={navigation} />
+                    </ScrollView>
                 </SafeAreaView>
             }
         </>
