@@ -4,6 +4,15 @@ import { IconButton, Subheading } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 
+const socialIconColours = {
+    facebook: '#4267B2',
+    instagram: '#E1306C',
+    twitter: '#1DA1F2',
+    soundcloud: '#ff8800',
+    bandcamp: '#629aa9',
+    spotify: '#1DB954'
+}
+
 
 const SocialLinks = ({ socials }) => {
 
@@ -25,7 +34,7 @@ const SocialLinks = ({ socials }) => {
                         <View key={index}>
                             {socials[key].url.length > 0 &&
                                 <TouchableOpacity onPress={() => openUrl(socials[key].url)}>
-                                    <IconButton animated icon={socials[key].name} size={30} />
+                                    <IconButton color={socialIconColours[socials[key].name]} animated icon={socials[key].name} size={30} />
                                 </TouchableOpacity>
                             }
                         </View>

@@ -20,7 +20,7 @@ const RegisterScreen = ({ navigation }) => {
     const [showSocials, setShowSocials] = useState(false);
     const { colors } = useTheme();
 
-    const [socials, setSocials] = useState([ { name: 'facebook', url: '' }, { name: 'instagram', url: '' }, { name: 'twitter', url: '' }, { name: 'soundcloud', url: '' }, { name: 'bandcamp', url: '' }, { name: 'spotify', url: ''}
+    const [socials, setSocials] = useState([{ name: 'facebook', url: '' }, { name: 'instagram', url: '' }, { name: 'twitter', url: '' }, { name: 'soundcloud', url: '' }, { name: 'bandcamp', url: '' }, { name: 'spotify', url: '' }
     ]);
 
     const [formIsValid, setFormIsValid] = useState(false);
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
         fontSize: 15
     },
     switchContainer: {
-        flex:1,
+        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
