@@ -48,26 +48,26 @@ const ArtistProfileScreen = ({ navigation }) => {
                             <Divider />
                             <Avatar.Image style={styles.artistImage} size={300} source={{ uri: currentProfile.artistImageUrl }} />
                             <Divider />
-                            {currentProfile.bio && currentProfile.bio.length > 0 &&
+                            {currentProfile.bio && currentProfile.bio.length > 0 ?
                                 <>
                                     <Subheading style={styles.subHeading}>Bio</Subheading>
                                     <Text style={styles.detailText}>{currentProfile.bio}</Text>
                                     <Divider />
-                                </>
+                                </>:null
                             }
-                            {currentProfile.location && currentProfile.location.length > 0 &&
+                            {currentProfile.location && currentProfile.location.length > 0 ?
                                 <>
                                     <Subheading style={styles.subHeading}>Location</Subheading>
                                     <Text style={styles.detailText}>London</Text>
                                     <Divider />
-                                </>
+                                </>:null
                             }
-                            {currentProfile.social && currentProfile.social.length > 0 &&
+                            {currentProfile.social && currentProfile.social.length > 0 ?
                                 <>
                                     <Subheading style={styles.subHeading}>Social</Subheading>
                                     <Text style={styles.detailText}>Facebook Twitter Soundcloud</Text>
                                     <Divider />
-                                </>
+                                </>:null
                             }
                         </View>
                     </ScrollView>
