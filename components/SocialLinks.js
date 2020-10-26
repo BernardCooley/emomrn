@@ -22,9 +22,13 @@ const SocialLinks = ({ socials }) => {
             <View style={styles.socialLinks}>
                 {
                     Object.keys(socials).map((key, index) => (
-                        <TouchableOpacity key={index} onPress={() => openUrl(socials[key].url)}>
-                            <IconButton animated icon={socials[key].name} size={30} />
-                        </TouchableOpacity>
+                        <View key={index}>
+                            {socials[key].url.length > 0 &&
+                                <TouchableOpacity onPress={() => openUrl(socials[key].url)}>
+                                    <IconButton animated icon={socials[key].name} size={30} />
+                                </TouchableOpacity>
+                            }
+                        </View>
                     ))
                 }
             </View>
