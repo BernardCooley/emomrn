@@ -16,6 +16,7 @@ const RegisterScreen = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [artistImage, setArtistImage] = useState({});
     const [bio, setBio] = useState('');
+    const [website, setWebsite] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
     const [showSocials, setShowSocials] = useState(false);
     const { colors } = useTheme();
@@ -109,7 +110,8 @@ const RegisterScreen = ({ navigation }) => {
                 userId: newUserData.user.uid,
                 artistName: artistName,
                 bio: bio,
-                socials: socials
+                socials: socials,
+                website: website
             }).then(async () => {
                 let reference = null;
 
@@ -244,6 +246,13 @@ const RegisterScreen = ({ navigation }) => {
                                             }
                                         </View>
                                     }
+
+                                    <TextInput
+                                        style={styles.input}
+                                        label="Website"
+                                        value={website}
+                                        onChangeText={website => setWebsite(website)}
+                                    />
 
                                     <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={register}>
                                         Register

@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, SafeAreaView, ScrollView } from 'react-native';
-import { Text, IconButton, Title, Divider, Avatar, Subheading } from 'react-native-paper';
+import { StyleSheet, View, SafeAreaView, ScrollView, Linking } from 'react-native';
+import { Text, IconButton, Title, Divider, Avatar, Subheading, useTheme } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import { artistProfileId } from '../Actions/index';
 import TracksList from '../components/TracksList';
 import PropTypes from 'prop-types';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import SocialLinks from '../components/SocialLinks';
 
 const ArtistProfileScreen = ({ navigation }) => {
+    const { colors } = useTheme();
     const dispatch = useDispatch();
     const currentprofileId = useSelector(state => state.artistProfileId);
     const allTracks = useSelector(state => state.tracks);
@@ -33,6 +35,16 @@ const ArtistProfileScreen = ({ navigation }) => {
     const backToArtists = () => {
         navigation.navigate('Tabs', { screen: 'Artists' });
         dispatch(artistProfileId(''));
+    }
+
+    const openUrl = url => {
+        Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+                Linking.openURL(url);
+            } else {
+                alert("Can't open: " + url);
+            }
+        });
     }
 
     return (
@@ -62,6 +74,15 @@ const ArtistProfileScreen = ({ navigation }) => {
                                     <Text style={styles.detailText}>{currentProfile.location}</Text>
                                     <Divider />
                                 </> : null
+                            }
+                            {currentProfile.website && currentProfile.website.length > 0 ?
+                                <View style={styles.link}>
+                                    <Subheading style={styles.subHeading}>Website</Subheading>
+                                    <TouchableOpacity onPress={() => openUrl(currentProfile.website)}>
+                                        <Text style={{...styles.detailText, ...styles.linkText, color: colors.primary}}>{currentProfile.website}</Text>
+                                    </TouchableOpacity>
+                                    <Divider />
+                                </View> : null
                             }
                             {currentProfile.socials && Object.keys(currentProfile.socials).length > 0 ?
                                 <>
@@ -128,6 +149,12 @@ const styles = StyleSheet.create({
     detailText: {
         width: '100%',
         marginBottom: 15
+    },
+    link: {
+        width: '100%'
+    },
+    linkText: {
+        textDecorationLine: 'underline'
     }
 });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Linking } from 'react-native';
-import { IconButton, Subheading } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 
