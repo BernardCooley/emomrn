@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, SafeAreaView, ScrollView, Image } from 'react-native';
-import { TextInput, Button, Text, Avatar, IconButton, Snackbar, ActivityIndicator } from 'react-native-paper';
+import { StyleSheet, View, SafeAreaView, ScrollView } from 'react-native';
+import { TextInput, Button, Text, Avatar, IconButton, Snackbar, ActivityIndicator, Switch, Divider, useTheme } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
@@ -17,6 +17,11 @@ const RegisterScreen = ({ navigation }) => {
     const [artistImage, setArtistImage] = useState({});
     const [bio, setBio] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
+    const [showSocials, setShowSocials] = useState(false);
+    const { colors } = useTheme();
+
+    const [socials, setSocials] = useState([ { name: 'facebook', url: '' }, { name: 'instagram', url: '' }, { name: 'twitter', url: '' }, { name: 'soundcloud', url: '' }, { name: 'bandcamp', url: '' }, { name: 'spotify', url: ''}
+    ]);
 
     const [formIsValid, setFormIsValid] = useState(false);
     const [snackBarMessage, setSnackBarMessage] = useState('');
@@ -44,6 +49,20 @@ const RegisterScreen = ({ navigation }) => {
     useEffect(() => {
         validate();
     }, [artistName, email, password, artistImage, bio]);
+
+    const showHideSocials = () => setShowSocials(!showSocials);
+
+    const setSocialUrl = (socialPlatform, value) => {
+        console.log(socialPlatform, value);
+
+        const updatedSocials = socials.map(social => {
+            if (social.name === socialPlatform) {
+                social.url = value
+            }
+            return social
+        })
+        setSocials(updatedSocials);
+    }
 
     const lauchFileUploader = async () => {
         ImagePicker.showImagePicker(options, (response) => {
@@ -89,7 +108,8 @@ const RegisterScreen = ({ navigation }) => {
             await firestore().collection('users').doc(newUserData.user.uid).set({
                 userId: newUserData.user.uid,
                 artistName: artistName,
-                bio: bio
+                bio: bio,
+                socials: socials
             }).then(async () => {
                 let reference = null;
 
@@ -170,12 +190,14 @@ const RegisterScreen = ({ navigation }) => {
                                         value={artistName}
                                         onChangeText={artistName => setArtistName(artistName)}
                                     />
+
                                     <TextInput
                                         style={styles.input}
                                         label="Email"
                                         value={email}
                                         onChangeText={email => setEmail(email)}
                                     />
+
                                     <TextInput
                                         style={styles.input}
                                         label="Password"
@@ -183,6 +205,7 @@ const RegisterScreen = ({ navigation }) => {
                                         onChangeText={password => setPassword(password)}
                                         secureTextEntry={true}
                                     />
+
                                     <TextInput
                                         style={styles.input}
                                         label="Bio (optional)"
@@ -190,7 +213,8 @@ const RegisterScreen = ({ navigation }) => {
                                         onChangeText={bio => setBio(bio)}
                                         multiline
                                     />
-                                    <Text style={styles.artistImageLabel}>Artist image (optional)</Text>
+
+                                    <Text style={{ ...styles.artistImageLabel, ...styles.customLabel }}>Artist image (optional)</Text>
                                     {artistImage.uri ?
                                         <View style={styles.artistImageContainer}>
                                             <Avatar.Image style={styles.artistImage} size={300} source={{ uri: artistImage.uri }} />
@@ -198,6 +222,29 @@ const RegisterScreen = ({ navigation }) => {
                                         </View> :
                                         <IconButton style={styles.uploadButton} animated icon="camera" size={30} onPress={lauchFileUploader} />
                                     }
+                                    <Divider />
+
+                                    <View style={styles.switchContainer}>
+                                        <Text style={styles.customLabel}>Socials (optional)</Text>
+                                        <Switch color={colors.primary} value={showSocials} onValueChange={showHideSocials} />
+                                    </View>
+                                    {showSocials &&
+                                        <View style={styles.socialFieldList}>
+                                            {
+                                                socials.map((social, index) => (
+                                                    <TextInput
+                                                        key={index}
+                                                        style={{ ...styles.socialInput, ...styles.input }}
+                                                        label={social.name.charAt(0).toUpperCase() + social.name.slice(1)}
+                                                        value={social.url}
+                                                        onChangeText={url => setSocialUrl(social.name, url)}
+                                                        multiline
+                                                    />
+                                                ))
+                                            }
+                                        </View>
+                                    }
+
                                     <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={register}>
                                         Register
                                     </Button>
@@ -228,7 +275,6 @@ const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     ...formStyles,
     artistImageContainer: {
-        marginTop: 20,
         flex: 1,
         alignItems: 'center'
     },
@@ -239,15 +285,34 @@ const styles = StyleSheet.create({
         marginLeft: 15
     },
     artistImageLabel: {
+        paddingVertical: 25
+    },
+    customLabel: {
         fontSize: 20,
         color: 'gray',
         paddingLeft: 25,
-        paddingTop: 25
     },
     deleteImageButton: {
         color: 'red',
         marginTop: 10,
         fontSize: 15
+    },
+    switchContainer: {
+        flex:1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingTop: 30
+    },
+    socialFieldList: {
+        flex: 1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        width: '100%'
+    },
+    socialInput: {
+        width: '95%',
+        marginVertical: 5
     }
 });
 

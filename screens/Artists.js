@@ -32,7 +32,7 @@ const ArtistsScreen = ({ navigation }) => {
                     style={styles.listContainer}
                     data={allArtists}
                     renderItem={renderItem}
-                    keyExtractor={track => track.id}
+                    keyExtractor={artist => artist.userId}
                     numColumns={2}
                 />
             </SafeAreaView>

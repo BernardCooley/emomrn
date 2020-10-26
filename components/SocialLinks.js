@@ -12,7 +12,7 @@ const SocialLinks = ({ socials }) => {
             if (supported) {
                 Linking.openURL(url);
             } else {
-                console.log("Don't know how to open URI: " + url);
+                alert("Can't open: " + url);
             }
         });
     }
@@ -22,8 +22,8 @@ const SocialLinks = ({ socials }) => {
             <View style={styles.socialLinks}>
                 {
                     Object.keys(socials).map((key, index) => (
-                        <TouchableOpacity key={index} onPress={() => openUrl(socials[key])}>
-                            <IconButton animated icon={key} size={30} />
+                        <TouchableOpacity key={index} onPress={() => openUrl(socials[key].url)}>
+                            <IconButton animated icon={socials[key].name} size={30} />
                         </TouchableOpacity>
                     ))
                 }
@@ -33,7 +33,7 @@ const SocialLinks = ({ socials }) => {
 }
 
 SocialLinks.propTypes = {
-    socials: PropTypes.object
+    socials: PropTypes.array
 }
 
 const styles = StyleSheet.create({
