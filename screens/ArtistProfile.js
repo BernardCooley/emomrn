@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, SafeAreaView, ScrollView, FlatList } from 'react-native';
-import { Text, IconButton, Title, Divider, Avatar, Subheading, List } from 'react-native-paper';
+import { StyleSheet, View, SafeAreaView, ScrollView, Linking } from 'react-native';
+import { Text, IconButton, Title, Divider, Avatar, Subheading } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import { artistProfileId } from '../Actions/index';
 import TracksList from '../components/TracksList';
 import PropTypes from 'prop-types';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 const ArtistProfileScreen = ({ navigation }) => {
@@ -24,14 +25,24 @@ const ArtistProfileScreen = ({ navigation }) => {
     }, [currentprofileId]);
 
     useEffect(() => {
-        if(currentProfile) {
+        if (currentProfile) {
             setCurrentProfileTracks(allTracks.filter(track => track.artistId === currentProfile.userId));
         }
     }, [currentProfile]);
 
     const backToArtists = () => {
-        navigation.navigate('Tabs', { screen: 'Music' });
+        navigation.navigate('Tabs', { screen: 'Artists' });
         dispatch(artistProfileId(''));
+    }
+
+    const openUrl = url => {
+        Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+                Linking.openURL(url);
+            } else {
+                console.log("Don't know how to open URI: " + url);
+            }
+        });
     }
 
     return (
@@ -53,32 +64,40 @@ const ArtistProfileScreen = ({ navigation }) => {
                                     <Subheading style={styles.subHeading}>Bio</Subheading>
                                     <Text style={styles.detailText}>{currentProfile.bio}</Text>
                                     <Divider />
-                                </>:null
+                                </> : null
                             }
                             {currentProfile.location && currentProfile.location.length > 0 ?
                                 <>
                                     <Subheading style={styles.subHeading}>Location</Subheading>
-                                    <Text style={styles.detailText}>London</Text>
+                                    <Text style={styles.detailText}>{currentProfile.location}</Text>
                                     <Divider />
-                                </>:null
+                                </> : null
                             }
-                            {currentProfile.social && currentProfile.social.length > 0 ?
+                            {currentProfile.socials && Object.keys(currentProfile.socials).length > 0 ?
                                 <>
-                                    <Subheading style={styles.subHeading}>Social</Subheading>
-                                    <Text style={styles.detailText}>Facebook Twitter Soundcloud</Text>
+                                    <Subheading style={styles.subHeading}>Socials</Subheading>
+                                    <View style={styles.socialLinks}>
+                                        {
+                                            Object.keys(currentProfile.socials).map((key, index) => (
+                                                <TouchableOpacity key={index} onPress={() => openUrl(currentProfile.socials[key])}>
+                                                    <IconButton animated icon={key} size={30} />
+                                                </TouchableOpacity>
+                                            ))
+                                        }
+                                    </View>
                                     <Divider />
-                                </>:null
+                                </> : null
                             }
                         </View>
                     </ScrollView>
                     <Subheading style={styles.tracksDetail}>Tracks</Subheading>
-                        {currentProfileTracks.length > 0 ? 
-                            <TracksList tracks={currentProfileTracks} navigation={navigation} /> :
-                            <Text style={styles.tracksDetail}>None</Text> 
-                        }
-                </SafeAreaView>:
+                    {currentProfileTracks.length > 0 ?
+                        <TracksList tracks={currentProfileTracks} navigation={navigation} /> :
+                        <Text style={styles.tracksDetail}>None</Text>
+                    }
+                </SafeAreaView> :
                 <View>
-                <Text>No profile. Redirect back to tracks and alert</Text>
+                    <Text>No profile. Redirect back to tracks and alert</Text>
                 </View>
             }
         </>
@@ -124,6 +143,13 @@ const styles = StyleSheet.create({
     detailText: {
         width: '100%',
         marginBottom: 15
+    },
+    socialLinks: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width: '100%'
     }
 });
 
