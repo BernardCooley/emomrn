@@ -66,14 +66,9 @@ export const PlayerContextProvider: React.FC = props => {
                     setTrackQueue(await getCurrentQueue());
                 })
             }else {
-                if (currentQueue.filter(track => track === track).length > 0) {
-                    await RNTrackPlayer.remove(track.id).then(async () => {
-                        await RNTrackPlayer.add([track], currentQueue[0].id).then(async () => {
-                            await RNTrackPlayer.skip(track.id);
-                            setCurrentTrack(track);
-                            setTrackQueue(await getCurrentQueue());
-                        });
-                    });
+                if (currentQueue.filter(tr => tr.id === track.id).length > 0) {
+                    await RNTrackPlayer.skip(track.id);
+                    setCurrentTrack(track);
                 }else {
                     await RNTrackPlayer.add([track], currentQueue[0].id).then(async () => {
                         await RNTrackPlayer.skip(track.id);
@@ -84,7 +79,7 @@ export const PlayerContextProvider: React.FC = props => {
             }
             await RNTrackPlayer.play();
         }else if(track && queue) {
-            if (currentQueue.filter(tracka => tracka.id === track.id).length > 0) {
+            if (currentQueue.filter(tr => tr.id === track.id).length > 0) {
                 alert('Already in queue');
             } else {
                 await RNTrackPlayer.add([track]).then(async () => {

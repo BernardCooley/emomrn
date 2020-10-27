@@ -7,23 +7,26 @@ import PropTypes from 'prop-types';
 
 import TracksList from '../components/TracksList';
 
-const MusicPlayer = () => {
+const MusicPlayer = ({ navigation }) => {
     const { colors } = useTheme();
     const [nextDisabled, setNextDisabled] = useState(false);
     const [previousDisabled, setPreviousDisabled] = useState(false);
+    const [filteredQueue, setFilteredQueue] = useState([]);
     const playerContext = usePlayerContext();
 
     useEffect(() => {
         if (playerContext.trackQueue && playerContext.currentTrack) {
-            const queue = playerContext.trackQueue;
+            const queue = [...playerContext.trackQueue];
             const track = queue.filter(track => track.id === playerContext.currentTrack.id)[0];
-            const index = (queue).indexOf(track);
+            const currentIdex = (queue).indexOf(track);
 
-            setNextDisabled(index === queue.length - 1);
-            setPreviousDisabled(index === 0);
+            setNextDisabled(currentIdex === queue.length - 1);
+            setPreviousDisabled(currentIdex === 0);
+
+            queue.splice(0, currentIdex + 1);
+
+            setFilteredQueue(queue);
         }
-
-
     }, [playerContext.trackQueue, playerContext.currentTrack]);
 
     const playPause = () => {
@@ -82,10 +85,10 @@ const MusicPlayer = () => {
                     <View style={{ ...styles.otherControlsContainer, ...styles.sectionContainer }}>
                         <Text>Other controls</Text>
                     </View>
-                    {playerContext.trackQueue && playerContext.trackQueue.length > 0 ?
+                    {filteredQueue && filteredQueue.length > 0 ?
                         <View style={{ ...styles.queueContainer, ...styles.sectionContainer }}>
                             <Title>Queue</Title>
-                            <TracksList tracks={playerContext.trackQueue} />
+                            <TracksList tracks={filteredQueue} navigation={navigation} />
                         </View> : null
                     }
                 </LinearGradient>
@@ -95,7 +98,8 @@ const MusicPlayer = () => {
 }
 
 MusicPlayer.propTypes = {
-    tracks: PropTypes.object
+    tracks: PropTypes.object,
+    navigation: PropTypes.object
 }
 
 const styles = StyleSheet.create({
