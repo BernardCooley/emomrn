@@ -7,8 +7,11 @@ interface PlayerContextType {
     isStopped: boolean;
     isEmpty: boolean;
     currentTrack: Track | null;
+    queue: Array<null | Track>;
     play: (track?: Track, queue?: Boolean) => void;
     pause: () => void;
+    next: () => void;
+    previous: () => void;
 }
 
 export const PlayerContext = React.createContext<PlayerContextType>({
@@ -17,13 +20,17 @@ export const PlayerContext = React.createContext<PlayerContextType>({
     isStopped: false,
     isEmpty: false,
     currentTrack: null,
+    queue: null,
     play: () => null,
-    pause: () => null
+    pause: () => null,
+    next: () => null,
+    previous: () => null
 })
 
 export const PlayerContextProvider: React.FC = props => {
     const [playerState, setPlayerState] = useState<null | TrackPlayerState>(null);
     const [currentTrack, setCurrentTrack] = useState<null | Track>(null);
+    const [queue, setQueue] = useState<Array<null | Track>>(null);
 
     useEffect(() => {
         const listener = RNTrackPlayer.addEventListener(
@@ -47,14 +54,25 @@ export const PlayerContextProvider: React.FC = props => {
         }
         if(!queue) {
             await RNTrackPlayer.reset();
+            setCurrentTrack(track);
         }
         await RNTrackPlayer.add([track]);
-        setCurrentTrack(track);
         await RNTrackPlayer.play();
+        setQueue((await RNTrackPlayer.getQueue()).map(track => {
+            return track
+        }));
     }
 
     const pause = async () => {
         await RNTrackPlayer.pause();
+    }
+
+    const next = async () => {
+        await RNTrackPlayer.skipToNext();
+    }
+
+    const previous = async () => {
+        await RNTrackPlayer.skipToPrevious();
     }
 
     const value: PlayerContextType = {
@@ -63,8 +81,11 @@ export const PlayerContextProvider: React.FC = props => {
         isStopped: playerState === STATE_STOPPED,
         isEmpty: playerState === null,
         currentTrack,
+        queue,
         pause,
-        play
+        play,
+        next,
+        previous
     }
 
     return (

@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Button } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { currentScreen } from '../Actions/index';
 
+import MusicPlayer from '../components/MusicPlayer';
 
 const MusicScreen = ({navigation}) => {
     const dispatch = useDispatch();
@@ -28,14 +29,19 @@ const MusicScreen = ({navigation}) => {
     }, [navigation]);
 
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text>Music</Text>
+        <View style={styles.playerContainer}>
+            <MusicPlayer/>
         </View>
       );
 }
 
 const styles = StyleSheet.create({
-
+    playerContainer: {
+        flex: 1,
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        flexDirection: 'row'
+    }
 });
 
 export default MusicScreen;
