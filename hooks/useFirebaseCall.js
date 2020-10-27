@@ -75,11 +75,13 @@ const useFirebaseCall = (collectionName, orderBy, limit) => {
                             concatData = [...tracksState, ...data];
                             setTracksState(concatData);
                         } else if (collectionName === 'users') {
-                            if (allTracks.length > 0) {
-                                data['trackAmount'] = allTracks.filter(track => track.artistId === data.userId).length;
-                            } else {
-                                data['trackAmount'] = 0;
-                            }
+                            data.forEach((artist, index) => {
+                                if (allTracks.length > 0) {
+                                    data[index]['trackAmount'] = allTracks.filter(track => track.artistId === artist.userId).length;
+                                } else {
+                                    data[index]['trackAmount'] = 0;
+                                }
+                            })
                             concatData = [...artistsState, ...data];
                             setArtistsState(concatData);
                             dispatch(artists(concatData));

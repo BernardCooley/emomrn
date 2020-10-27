@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, SafeAreaView, FlatList, RefreshControl } from 'react-native';
 import { Card, Title, Chip } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,9 +9,14 @@ import useFirebaseCall from '../hooks/useFirebaseCall';
 const ArtistsScreen = ({ navigation }) => {
     const dispatch = useDispatch();
     const allArtists = useSelector(state => state.artists);
+    const allTracks = useSelector(state => state.tracks);
     const [refreshing, setRefreshing] = React.useState(false);
 
     const [getArtists, error, getNextArtists] = useFirebaseCall('users', 'userId', 20);
+
+    useEffect(() => {
+        getArtists();
+    }, [allTracks]);
 
     const wait = (timeout) => {
         return new Promise(resolve => {
