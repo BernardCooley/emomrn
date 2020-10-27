@@ -7,7 +7,7 @@ interface PlayerContextType {
     isStopped: boolean;
     isEmpty: boolean;
     currentTrack: Track | null;
-    queue: Array<null | Track>;
+    trackQueue: Array<null | Track>;
     play: (track?: Track, queue?: Boolean) => void;
     pause: () => void;
     next: () => void;
@@ -20,7 +20,7 @@ export const PlayerContext = React.createContext<PlayerContextType>({
     isStopped: false,
     isEmpty: false,
     currentTrack: null,
-    queue: null,
+    trackQueue: null,
     play: () => null,
     pause: () => null,
     next: () => null,
@@ -30,7 +30,7 @@ export const PlayerContext = React.createContext<PlayerContextType>({
 export const PlayerContextProvider: React.FC = props => {
     const [playerState, setPlayerState] = useState<null | TrackPlayerState>(null);
     const [currentTrack, setCurrentTrack] = useState<null | Track>(null);
-    const [queue, setQueue] = useState<Array<null | Track>>(null);
+    const [trackQueue, setTrackQueue] = useState<Array<null | Track>>(null);
 
     useEffect(() => {
         const listener = RNTrackPlayer.addEventListener(
@@ -45,22 +45,30 @@ export const PlayerContextProvider: React.FC = props => {
         }
     }, []);
 
+    const getCurrentQueue = async () => {
+        return (await RNTrackPlayer.getQueue()).map(track => {
+            return track
+        });
+    }
+
     const play = async (track?: Track, queue?: Boolean) => {
         if(!track) {
             if(currentTrack) {
                 await RNTrackPlayer.play();
             }
             return;
-        }
-        if(!queue) {
-            await RNTrackPlayer.reset();
+        }else if(track && !queue) {
+            if(getCurrentQueue()[0]) {
+                await RNTrackPlayer.add([track], getCurrentQueue()[0].id);
+            }else {
+                await RNTrackPlayer.add([track]);
+                await RNTrackPlayer.play();
+            }
             setCurrentTrack(track);
+        }else if(track && queue) {
+            await RNTrackPlayer.add([track]);
         }
-        await RNTrackPlayer.add([track]);
-        await RNTrackPlayer.play();
-        setQueue((await RNTrackPlayer.getQueue()).map(track => {
-            return track
-        }));
+        setTrackQueue(await getCurrentQueue());
     }
 
     const pause = async () => {
@@ -81,7 +89,7 @@ export const PlayerContextProvider: React.FC = props => {
         isStopped: playerState === STATE_STOPPED,
         isEmpty: playerState === null,
         currentTrack,
-        queue,
+        trackQueue,
         pause,
         play,
         next,
