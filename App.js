@@ -12,7 +12,7 @@ const App = () => {
     roundness: 2,
     colors: {
       ...DefaultTheme.colors,
-      primary: '#3498db',
+      primary: '#329C97',
       accent: '#f1c40f',
     },
   };

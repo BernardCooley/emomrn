@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
+import { useTheme } from 'react-native-paper';
 
 import MusicScreen from '../screens/Music';
 import ExploreScreen from '../screens/Explore';
@@ -39,8 +40,15 @@ const AccountScreenStackNavigator = () => {
 const MainTab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
+  const { colors } = useTheme();
+
   return (
     <MainTab.Navigator
+      tabBarOptions={{
+        activeTintColor: colors.primary,
+        activeBackgroundColor: 'lightgray',
+        showLabel: false
+      }}
       tabBar={tabsProps => (
         <>
           <MiniPlayer />
@@ -48,23 +56,23 @@ const MainTabNavigator = () => {
         </>
       )}>
       <MainTab.Screen name="Explore" component={ExploreScreenStackNavigator} options={{
-          tabBarLabel: 'Explore',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="music-box-multiple" color={color} size={26} />
-          ),
-        }} />
-        <MainTab.Screen name="Music" component={MusicScreenStackNavigator} options={{
-          tabBarLabel: 'Music',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="music" color={color} size={26} />
-          ),
-        }} />
+        tabBarLabel: 'Explore',
+        tabBarIcon: ({color}) => (
+          <MaterialCommunityIcons name="music-box-multiple" color={color} size={30} />
+        ),
+      }} />
+      <MainTab.Screen name="Music" component={MusicScreenStackNavigator} options={{
+        tabBarLabel: 'Music',
+        tabBarIcon: ({color}) => (
+          <MaterialCommunityIcons name="music" color={color} size={30} />
+        ),
+      }} />
       <MainTab.Screen name="Account" component={AccountScreenStackNavigator} options={{
-          tabBarLabel: 'Account',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="account" color={color} size={26} />
-          ),
-        }} />
+        tabBarLabel: 'Account',
+        tabBarIcon: ({color}) => (
+          <MaterialCommunityIcons name="account" color={color} size={30} />
+        ),
+      }} />
     </MainTab.Navigator>
   )
 }

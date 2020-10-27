@@ -7,7 +7,7 @@ import auth from '@react-native-firebase/auth';
 const AccountScreen = ({navigation}) => {
     const logout = () => {
         auth().signOut().then(() => {
-            navigation.navigate('Login');
+            navigation.navigate('Home');
         });
     }
 

@@ -3,7 +3,7 @@ const formStyles = {
         flex: 1
     },
     registerLinkContainer: {
-        flex: 1,
+        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
@@ -11,9 +11,6 @@ const formStyles = {
     },
     registerText: {
         fontSize: 16
-    },
-    registerLink: {
-
     },
     button: {
         marginTop: 40,

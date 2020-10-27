@@ -14,7 +14,6 @@ const LoginScreen = ({ navigation }) => {
     const passwordRef = useRef();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [showLogin, setShowLogin] = useState(false);
 
     const [formIsValid, setFormIsValid] = useState(false);
     const [snackBarMessage, setSnackBarMessage] = useState('');
@@ -30,10 +29,7 @@ const LoginScreen = ({ navigation }) => {
 
     useEffect(() => {
         if (auth().currentUser) {
-            setShowLogin(false);
             navigation.navigate('Tabs', { screen: 'Explore' });
-        } else {
-            setShowLogin(true);
         }
     }, []);
 
@@ -53,7 +49,6 @@ const LoginScreen = ({ navigation }) => {
     const login = async () => {
         await auth().signInWithEmailAndPassword(email, password).then(() => {
             navigation.navigate('Tabs', { screen: 'Explore' });
-            setShowLogin(true);
         }).catch(error => {
             if (error.code === 'auth/user-not-found') {
                 setSnackBarMessage('Email and/or password incorrect. Please try again')
@@ -63,43 +58,39 @@ const LoginScreen = ({ navigation }) => {
 
     return (
         <>
-            {showLogin &&
-                <>
-                    <View style={styles.container}>
-                        <View style={styles.formContainer}>
-                            <TextInput
-                                ref={emailRef}
-                                style={styles.input}
-                                label="Email"
-                                value={email}
-                                onChangeText={email => setEmail(email)}
-                            />
-                            <TextInput
-                                ref={passwordRef}
-                                style={styles.input}
-                                label="Password"
-                                value={password}
-                                onChangeText={password => setPassword(password)}
-                                secureTextEntry={true}
-                            />
-                            <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={login}>
-                                Log in
+            <View style={styles.container}>
+                <View style={styles.formContainer}>
+                    <TextInput
+                        ref={emailRef}
+                        style={styles.input}
+                        label="Email"
+                        value={email}
+                        onChangeText={email => setEmail(email)}
+                    />
+                    <TextInput
+                        ref={passwordRef}
+                        style={styles.input}
+                        label="Password"
+                        value={password}
+                        onChangeText={password => setPassword(password)}
+                        secureTextEntry={true}
+                    />
+                    <Button disabled={!formIsValid} style={styles.button} mode="contained" onPress={login}>
+                        Log in
                             </Button>
-                        </View>
-                        <View style={styles.registerLinkContainer}>
-                            <Text style={styles.registerText}>Dont have an accout?.....</Text>
-                            <Button style={styles.registerLink} mode="text" onPress={() => navigation.navigate('Register')}>
-                                register
+                </View>
+                <View style={styles.registerLinkContainer}>
+                    <Text style={styles.registerText}>Dont have an accout?.....</Text>
+                    <Button style={styles.registerLink} mode="text" onPress={() => navigation.navigate('Register')}>
+                        register
                             </Button>
-                        </View>
-                    </View>
-                    <Snackbar
-                        visible={snackBarMessage.length > 0}
-                        onDismiss={() => setSnackBarMessage('')}>
-                        {snackBarMessage}
-                    </Snackbar>
-                </>
-            }
+                </View>
+            </View>
+            <Snackbar
+                visible={snackBarMessage.length > 0}
+                onDismiss={() => setSnackBarMessage('')}>
+                {snackBarMessage}
+            </Snackbar>
         </>
     );
 }
