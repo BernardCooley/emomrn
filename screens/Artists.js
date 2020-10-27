@@ -1,12 +1,29 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, FlatList } from 'react-native';
+import { StyleSheet, SafeAreaView, FlatList, RefreshControl } from 'react-native';
 import { Card, Title, Chip } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { artistProfileId } from '../Actions/index';
 
+import useFirebaseCall from '../hooks/useFirebaseCall';
+
 const ArtistsScreen = ({ navigation }) => {
     const dispatch = useDispatch();
     const allArtists = useSelector(state => state.artists);
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const [getArtists, error, getNextArtists] = useFirebaseCall('users', 'userId', 20);
+
+    const wait = (timeout) => {
+        return new Promise(resolve => {
+            setTimeout(resolve, timeout);
+        });
+    }
+
+    const refresh = () => {
+        setRefreshing(true);
+        getArtists();
+        wait(2000).then(() => setRefreshing(false));
+    };
 
     const viewArtistProfile = artistId => {
         dispatch(artistProfileId(artistId));
@@ -29,6 +46,9 @@ const ArtistsScreen = ({ navigation }) => {
         <>
             <SafeAreaView style={styles.artistsContainer}>
                 <FlatList
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+                    }
                     style={styles.listContainer}
                     data={allArtists}
                     renderItem={renderItem}

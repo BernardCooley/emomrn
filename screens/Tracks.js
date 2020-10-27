@@ -5,12 +5,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import TracksList from '../components/TracksList';
 import PropTypes from 'prop-types';
 
-import useGetTracks from '../hooks/useGetTracks';
+import useFirebaseCall from '../hooks/useFirebaseCall';
 
 
 const TracksScreen = ({ navigation }) => {
     const allTracks = useSelector(state => state.tracks);
-    const [getTracks, error, getNextTracks] = useGetTracks('tracks', 'id', 20);
+    const [getTracks, error, getNextTracks] = useFirebaseCall('tracks', 'id', 20);
     const [refreshing, setRefreshing] = React.useState(false);
 
 
