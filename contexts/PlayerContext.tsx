@@ -8,6 +8,7 @@ interface PlayerContextType {
     isEmpty: boolean;
     currentTrack: Track | null;
     trackQueue: Array<null | Track>;
+    progress: Number;
     play: (track?: Track, queue?: Boolean) => void;
     pause: () => void;
     next: () => void;
@@ -21,16 +22,20 @@ export const PlayerContext = React.createContext<PlayerContextType>({
     isEmpty: false,
     currentTrack: null,
     trackQueue: null,
+    progress: 0,
     play: () => null,
     pause: () => null,
     next: () => null,
     previous: () => null
 })
 
+let interval;
+
 export const PlayerContextProvider: React.FC = props => {
     const [playerState, setPlayerState] = useState<null | TrackPlayerState>(null);
     const [currentTrack, setCurrentTrack] = useState<null | Track>(null);
     const [trackQueue, setTrackQueue] = useState<Array<null | Track>>(null);
+    const [progress, setProgress] = useState<Number>(0);
 
     useEffect(() => {
         const listener = RNTrackPlayer.addEventListener(
@@ -45,10 +50,20 @@ export const PlayerContextProvider: React.FC = props => {
         }
     }, []);
 
+    const getCurrentPosition = async () => {
+        await RNTrackPlayer.getPosition().then(pos => {
+            setProgress(pos);
+        })
+    }
+
     const getCurrentQueue = async () => {
         return (await RNTrackPlayer.getQueue()).map(track => {
             return track
         });
+    }
+
+    const startProgress = () => {
+        interval = setInterval(() => getCurrentPosition(), 1000);
     }
 
     const play = async (track?: Track, queue?: Boolean) => {
@@ -56,7 +71,9 @@ export const PlayerContextProvider: React.FC = props => {
 
         if(!track && !queue) {
             if (currentTrack) {
-                await RNTrackPlayer.play();
+                await RNTrackPlayer.play().then(() => {
+                    startProgress();
+                })
             }
             return;
         }else if(track && !queue) {
@@ -77,7 +94,9 @@ export const PlayerContextProvider: React.FC = props => {
                     });
                 }
             }
-            await RNTrackPlayer.play();
+            await RNTrackPlayer.play().then(() => {
+                startProgress();
+            })
         }else if(track && queue) {
             if (currentQueue.filter(tr => tr.id === track.id).length > 0) {
                 alert('Already in queue');
@@ -90,7 +109,9 @@ export const PlayerContextProvider: React.FC = props => {
     }
 
     const pause = async () => {
-        await RNTrackPlayer.pause();
+        await RNTrackPlayer.pause().then(() => {
+            clearInterval(interval);
+        })
     }
 
     const next = async () => {
@@ -99,6 +120,8 @@ export const PlayerContextProvider: React.FC = props => {
                 tracks.forEach(async track => {
                     if (track.id === await RNTrackPlayer.getCurrentTrack()) {
                         setCurrentTrack(track);
+                        clearInterval(interval);
+                        startProgress();
                     }
                 })
             })
@@ -111,6 +134,8 @@ export const PlayerContextProvider: React.FC = props => {
                 tracks.forEach(async track => {
                     if (track.id === await RNTrackPlayer.getCurrentTrack()) {
                         setCurrentTrack(track);
+                        clearInterval(interval);
+                        startProgress();
                     }
                 })
             })
@@ -124,6 +149,7 @@ export const PlayerContextProvider: React.FC = props => {
         isEmpty: playerState === null,
         currentTrack,
         trackQueue,
+        progress,
         pause,
         play,
         next,

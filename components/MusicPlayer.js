@@ -6,6 +6,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 
 import TracksList from '../components/TracksList';
+import Progress from './Progress';
 
 const MusicPlayer = ({ navigation }) => {
     const { colors } = useTheme();
@@ -24,7 +25,6 @@ const MusicPlayer = ({ navigation }) => {
             setPreviousDisabled(currentIdex === 0);
 
             queue.splice(0, currentIdex + 1);
-
             setFilteredQueue(queue);
         }
     }, [playerContext.trackQueue, playerContext.currentTrack]);
@@ -73,7 +73,7 @@ const MusicPlayer = ({ navigation }) => {
                         <Text>{playerContext.currentTrack.artist}</Text>
                     </View>
                     <View style={{ ...styles.trackProgressContainer, ...styles.sectionContainer }}>
-                        <Text>Track progress</Text>
+                        <Progress/>
                     </View>
                     <View style={{ ...styles.trackControlsContainer, ...styles.sectionContainer }}>
                         <IconButton animated icon="shuffle" size={30} onPress={e => openMenu(e, tracks[key])} />
