@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, SafeAreaView } from 'react-native';
+import { StyleSheet, View, SafeAreaView, ScrollView } from 'react-native';
 import { Title, Text, Avatar, IconButton, useTheme } from 'react-native-paper';
 import { usePlayerContext } from '../contexts/PlayerContext';
 import LinearGradient from 'react-native-linear-gradient';
+import PropTypes from 'prop-types';
+
+import TracksList from '../components/TracksList';
 
 const MusicPlayer = () => {
     const { colors } = useTheme();
@@ -54,30 +57,45 @@ const MusicPlayer = () => {
 
     return (
         <SafeAreaView>
-            <LinearGradient colors={['#3A6E7A', '#318E8F', '#C5E3E5']} style={styles.playerContainer}>
-                <View style={{ ...styles.trackImageContainer, ...styles.sectionContainer }}>
-                    <Avatar.Image source={{ uri: playerContext.currentTrack.trackImage }} size={300} style={styles.image}></Avatar.Image>
-                </View>
-                <View style={{ ...styles.trackDetailsContainer, ...styles.sectionContainer }}>
-                    <Title>{playerContext.currentTrack.title}</Title>
-                    <Text>{playerContext.currentTrack.artist}</Text>
-                </View>
-                <View style={{ ...styles.trackProgressContainer, ...styles.sectionContainer }}>
-                    <Text>Track progress</Text>
-                </View>
-                <View style={{ ...styles.trackControlsContainer, ...styles.sectionContainer }}>
-                    <IconButton animated icon="shuffle" size={30} onPress={e => openMenu(e, tracks[key])} />
-                    <IconButton animated icon="skip-previous" disabled={previousDisabled} size={40} onPress={previousTrack} />
-                    <IconButton animated icon={playerContext.isPlaying ? "pause" : "play-circle-outline"} size={60} onPress={playPause} />
-                    <IconButton animated icon="skip-next" disabled={nextDisabled} size={40} onPress={nextTrack} />
-                    <IconButton animated icon="repeat" size={30} onPress={e => openMenu(e, tracks[key])} />
-                </View>
-                <View style={{ ...styles.otherControlsContainer, ...styles.sectionContainer }}>
-                    <Text>Other controls</Text>
-                </View>
-            </LinearGradient>
+            <ScrollView style={styles.scrollView} contentContainerStyle={{
+                flexGrow: 1,
+                justifyContent: 'space-between'
+            }}>
+                <LinearGradient colors={['#3A6E7A', '#318E8F', '#C5E3E5']} style={styles.playerContainer}>
+                    <View style={{ ...styles.trackImageContainer, ...styles.sectionContainer }}>
+                        <Avatar.Image source={{ uri: playerContext.currentTrack.trackImage }} size={300} style={styles.image}></Avatar.Image>
+                    </View>
+                    <View style={{ ...styles.trackDetailsContainer, ...styles.sectionContainer }}>
+                        <Title>{playerContext.currentTrack.title}</Title>
+                        <Text>{playerContext.currentTrack.artist}</Text>
+                    </View>
+                    <View style={{ ...styles.trackProgressContainer, ...styles.sectionContainer }}>
+                        <Text>Track progress</Text>
+                    </View>
+                    <View style={{ ...styles.trackControlsContainer, ...styles.sectionContainer }}>
+                        <IconButton animated icon="shuffle" size={30} onPress={e => openMenu(e, tracks[key])} />
+                        <IconButton animated icon="skip-previous" disabled={previousDisabled} size={40} onPress={previousTrack} />
+                        <IconButton animated icon={playerContext.isPlaying ? "pause" : "play-circle-outline"} size={60} onPress={playPause} />
+                        <IconButton animated icon="skip-next" disabled={nextDisabled} size={40} onPress={nextTrack} />
+                        <IconButton animated icon="repeat" size={30} onPress={e => openMenu(e, tracks[key])} />
+                    </View>
+                    <View style={{ ...styles.otherControlsContainer, ...styles.sectionContainer }}>
+                        <Text>Other controls</Text>
+                    </View>
+                    {playerContext.trackQueue && playerContext.trackQueue.length > 0 ?
+                        <View style={{ ...styles.queueContainer, ...styles.sectionContainer }}>
+                            <Title>Queue</Title>
+                            <TracksList tracks={playerContext.trackQueue} />
+                        </View> : null
+                    }
+                </LinearGradient>
+            </ScrollView>
         </SafeAreaView>
     )
+}
+
+MusicPlayer.propTypes = {
+    tracks: PropTypes.object
 }
 
 const styles = StyleSheet.create({

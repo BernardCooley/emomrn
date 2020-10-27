@@ -52,23 +52,46 @@ export const PlayerContextProvider: React.FC = props => {
     }
 
     const play = async (track?: Track, queue?: Boolean) => {
-        if(!track) {
-            if(currentTrack) {
+        const currentQueue = await getCurrentQueue();
+
+        if(!track && !queue) {
+            if (currentTrack) {
                 await RNTrackPlayer.play();
             }
             return;
         }else if(track && !queue) {
-            if(getCurrentQueue()[0]) {
-                await RNTrackPlayer.add([track], getCurrentQueue()[0].id);
+            if(currentQueue.length === 0) {
+                await RNTrackPlayer.add([track]).then(async () => {
+                    setCurrentTrack(track);
+                    setTrackQueue(await getCurrentQueue());
+                })
             }else {
-                await RNTrackPlayer.add([track]);
-                await RNTrackPlayer.play();
+                if (currentQueue.filter(track => track === track).length > 0) {
+                    await RNTrackPlayer.remove(track.id).then(async () => {
+                        await RNTrackPlayer.add([track], currentQueue[0].id).then(async () => {
+                            await RNTrackPlayer.skip(track.id);
+                            setCurrentTrack(track);
+                            setTrackQueue(await getCurrentQueue());
+                        });
+                    });
+                }else {
+                    await RNTrackPlayer.add([track], currentQueue[0].id).then(async () => {
+                        await RNTrackPlayer.skip(track.id);
+                        setCurrentTrack(track);
+                        setTrackQueue(await getCurrentQueue());
+                    });
+                }
             }
-            setCurrentTrack(track);
+            await RNTrackPlayer.play();
         }else if(track && queue) {
-            await RNTrackPlayer.add([track]);
+            if (currentQueue.filter(tracka => tracka.id === track.id).length > 0) {
+                alert('Already in queue');
+            } else {
+                await RNTrackPlayer.add([track]).then(async () => {
+                    setTrackQueue(await getCurrentQueue());
+                })  
+            }
         }
-        setTrackQueue(await getCurrentQueue());
     }
 
     const pause = async () => {
@@ -76,11 +99,27 @@ export const PlayerContextProvider: React.FC = props => {
     }
 
     const next = async () => {
-        await RNTrackPlayer.skipToNext();
+        await RNTrackPlayer.skipToNext().then(async () => {
+            await getCurrentQueue().then(tracks => {
+                tracks.forEach(async track => {
+                    if (track.id === await RNTrackPlayer.getCurrentTrack()) {
+                        setCurrentTrack(track);
+                    }
+                })
+            })
+        })
     }
 
     const previous = async () => {
-        await RNTrackPlayer.skipToPrevious();
+        await RNTrackPlayer.skipToPrevious().then(async () => {
+            await getCurrentQueue().then(tracks => {
+                tracks.forEach(async track => {
+                    if (track.id === await RNTrackPlayer.getCurrentTrack()) {
+                        setCurrentTrack(track);
+                    }
+                })
+            })
+        })
     }
 
     const value: PlayerContextType = {
