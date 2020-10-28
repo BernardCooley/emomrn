@@ -145,7 +145,11 @@ export const PlayerContextProvider: React.FC = props => {
     }
 
     const seekTo = async (seconds: number) => {
-        await RNTrackPlayer.seekTo(seconds);
+        await RNTrackPlayer.stop().then(async () => {
+            await RNTrackPlayer.seekTo(seconds).then(async () => {
+                await RNTrackPlayer.play();
+            })
+        })
     }
 
     const value: PlayerContextType = {
