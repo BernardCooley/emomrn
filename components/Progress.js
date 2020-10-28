@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ProgressBar, useTheme, Text } from 'react-native-paper';
 import { usePlayerContext } from '../contexts/PlayerContext';
 
 const Progress = ({ }) => {
+    let progressRef = useRef();
     const playerContext = usePlayerContext();
     const [progressBarWidth, setProgressBarWidth] = useState(0);
+    const [progressBarPageX, setProgressBarPageX] = useState(0);
 
     const convertToMins = seconds => {
         let mins = Math.floor(seconds / 60);
@@ -14,15 +16,25 @@ const Progress = ({ }) => {
     }
 
     const skipToTime = e => {
-        playerContext.seekTo(playerContext.currentTrack.duration * e.nativeEvent.locationX/progressBarWidth)
+        playerContext.seekTo(playerContext.currentTrack.duration * (e.nativeEvent.pageX - progressBarPageX) / progressBarWidth)
+    }
+
+    const getProgressBarDetails = (event) => {
+        setProgressBarWidth(event.nativeEvent.layout.width);
+
+        if (progressRef) {
+            progressRef.measure((x, y, width, height, pageX, pageY) => {
+                setProgressBarPageX(pageX);
+            })
+        }
     }
 
     return (
         <View style={styles.progressBarContainer}>
-            <View onLayout={event => setProgressBarWidth(event.nativeEvent.layout.width)}>
+            <View onTouchEnd={(e) => skipToTime(e)} onTouchMove={(e) => skipToTime(e)} ref={(ref) => { progressRef = ref }}
+                onLayout={(event) => getProgressBarDetails(event)}>
                 <ProgressBar style={styles.progressBar}
-                    onTouchStart={(e) => skipToTime(e)}
-                    progress={Math.round(playerContext.progress) / 300} color='black' />
+                    progress={Math.round(playerContext.progress) / playerContext.currentTrack.duration} color='black' />
             </View>
             <View style={styles.timeContainer}>
                 <Text style={styles.timeText}>{convertToMins(parseInt(Math.round(playerContext.progress)))}</Text>
