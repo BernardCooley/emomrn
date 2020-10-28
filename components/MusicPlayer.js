@@ -13,6 +13,7 @@ const MusicPlayer = ({ navigation }) => {
     const [nextDisabled, setNextDisabled] = useState(false);
     const [previousDisabled, setPreviousDisabled] = useState(false);
     const [filteredQueue, setFilteredQueue] = useState([]);
+    const [showCommentsOrQueue, setShowCommentsOrQueue] = useState('');
     const playerContext = usePlayerContext();
 
     useEffect(() => {
@@ -53,7 +54,7 @@ const MusicPlayer = ({ navigation }) => {
 
     }
 
-
+    
     if (playerContext.isEmpty || !playerContext.currentTrack) {
         return null;
     }
@@ -73,7 +74,7 @@ const MusicPlayer = ({ navigation }) => {
                         <Text>{playerContext.currentTrack.artist}</Text>
                     </View>
                     <View style={{ ...styles.trackProgressContainer, ...styles.sectionContainer }}>
-                        <Progress/>
+                        <Progress />
                     </View>
                     <View style={{ ...styles.trackControlsContainer, ...styles.sectionContainer }}>
                         <IconButton animated icon="shuffle" size={30} onPress={e => openMenu(e, tracks[key])} />
@@ -83,15 +84,21 @@ const MusicPlayer = ({ navigation }) => {
                         <IconButton animated icon="repeat" size={30} onPress={e => openMenu(e, tracks[key])} />
                     </View>
                     <View style={{ ...styles.otherControlsContainer, ...styles.sectionContainer }}>
-                        <Text>Other controls</Text>
+                        <IconButton animated icon="comment" size={20} onPress={() => setShowCommentsOrQueue('comments')} />
+                        <IconButton animated icon="playlist-play" size={20} onPress={() => setShowCommentsOrQueue('queue')} />
                     </View>
-                    {filteredQueue && filteredQueue.length > 0 ?
-                        <View style={{ ...styles.queueContainer, ...styles.sectionContainer }}>
-                            <Title>Queue</Title>
-                            <TracksList tracks={filteredQueue} navigation={navigation} />
-                        </View> : null
-                    }
                 </LinearGradient>
+                {filteredQueue && filteredQueue.length > 0 && showCommentsOrQueue === 'queue' ?
+                    <View style={{ ...styles.queueContainer, ...styles.sectionContainer }}>
+                        <Title>Queue</Title>
+                        <TracksList tracks={filteredQueue} navigation={navigation} />
+                    </View> : null
+                }
+                {showCommentsOrQueue === 'comments' ?
+                    <View style={{ ...styles.commentsContainer, ...styles.sectionContainer }}>
+                        <Title>Comments</Title>
+                    </View> : null
+                }
             </ScrollView>
         </SafeAreaView>
     )
@@ -132,10 +139,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        height: 60
+        height: 50
     },
     otherControlsContainer: {
-
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     }
 });
 

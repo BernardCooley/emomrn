@@ -13,6 +13,7 @@ interface PlayerContextType {
     pause: () => void;
     next: () => void;
     previous: () => void;
+    seekTo: (seconds: number) => void;
 }
 
 export const PlayerContext = React.createContext<PlayerContextType>({
@@ -26,7 +27,8 @@ export const PlayerContext = React.createContext<PlayerContextType>({
     play: () => null,
     pause: () => null,
     next: () => null,
-    previous: () => null
+    previous: () => null,
+    seekTo: () => null
 })
 
 let interval;
@@ -142,6 +144,10 @@ export const PlayerContextProvider: React.FC = props => {
         })
     }
 
+    const seekTo = async (seconds: number) => {
+        await RNTrackPlayer.seekTo(seconds);
+    }
+
     const value: PlayerContextType = {
         isPlaying: playerState === STATE_PLAYING,
         isPaused: playerState === STATE_PAUSED,
@@ -153,7 +159,8 @@ export const PlayerContextProvider: React.FC = props => {
         pause,
         play,
         next,
-        previous
+        previous,
+        seekTo
     }
 
     return (
