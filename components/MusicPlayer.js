@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, SafeAreaView, ScrollView } from 'react-native';
-import { Title, Text, Avatar, IconButton, useTheme, Modal, Portal, Provider, Button } from 'react-native-paper';
+import { Title, Text, Avatar, IconButton } from 'react-native-paper';
 import { usePlayerContext } from '../contexts/PlayerContext';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 
-import TracksList from '../components/TracksList';
 import Progress from './Progress';
+import QueueModal from '../components/QueueModal';
 
 const MusicPlayer = ({ navigation }) => {
-    const { colors } = useTheme();
     const [nextDisabled, setNextDisabled] = useState(false);
     const [previousDisabled, setPreviousDisabled] = useState(false);
     const [filteredQueue, setFilteredQueue] = useState([]);
@@ -93,18 +92,7 @@ const MusicPlayer = ({ navigation }) => {
                     </LinearGradient>
                 </ScrollView>
             </SafeAreaView>
-            <Provider>
-                <Portal>
-                    <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={styles.modalContainerStyles}>
-                        <View style={{ ...styles.queueContainer, ...styles.sectionContainer }}>
-                            <Title>Queue</Title>
-                            <TracksList tracks={filteredQueue} navigation={navigation} listLocation='playerQueue' />
-                        </View>
-                        <Button color={colors.primary} mode='text' onPress={() => playerContext.clearQueue()} style={styles.clearButton}>Clear</Button>
-                        <IconButton style={styles.closeIcon} animated icon="close" size={20} onPress={() => setModalVisible(false)} />
-                    </Modal>
-                </Portal>
-            </Provider>
+            <QueueModal tracks={filteredQueue} navigation={navigation} show={modalVisible}/>
         </>
     )
 }
@@ -112,7 +100,7 @@ const MusicPlayer = ({ navigation }) => {
 MusicPlayer.propTypes = {
     tracks: PropTypes.object,
     navigation: PropTypes.object,
-    listLocation: PropTypes.string
+    show: PropTypes.bool
 }
 
 const styles = StyleSheet.create({
@@ -146,26 +134,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
-    },
-    modalContainerStyles: {
-        flex: 1,
-        backgroundColor: 'white',
-        paddingHorizontal: 20,
-        margin: 30,
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        borderRadius: 10
-    },
-    clearButton: {
-        position: 'absolute',
-        bottom: 10,
-        right: 10
-    },
-    closeIcon: {
-        position: 'absolute',
-        top: 10,
-        right: 10
     }
 });
 
