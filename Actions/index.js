@@ -46,3 +46,10 @@ export const commentsModalVisible = visible => {
         payload: visible
     };
 };
+
+export const trackComments = comments => {
+    return {
+        type: 'TRACK_COMMENTS',
+        payload: comments
+    };
+};

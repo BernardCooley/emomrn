@@ -10,7 +10,8 @@ const allReducers = combineReducers({
     artistProfileId: screenReducers.artistProfileId,
     artists: musicReducers.artists,
     queueModalVisible: musicReducers.queueModalVisible,
-    commentsModalVisible: musicReducers.commentsModalVisible
+    commentsModalVisible: musicReducers.commentsModalVisible,
+    trackComments: musicReducers.trackComments
 });
 
 const rootReducer = (state, action) => {

@@ -30,6 +30,14 @@ const musicReducers = {
             default:
                 return state;
         }
+    },
+    trackComments: (state = [], action) => {
+        switch (action.type) {
+            case 'TRACK_COMMENTS':
+                return state = action.payload;
+            default:
+                return state;
+        }
     }
 }
 

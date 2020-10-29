@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 
-import { commentsModalVisible, queueModalVisible } from '../Actions/index';
+import { commentsModalVisible, queueModalVisible, trackComments } from '../Actions/index';
 import Progress from './Progress';
 import QueueModal from '../components/QueueModal';
 import CommentsModal from '../components/CommentsModal';
@@ -19,7 +19,6 @@ const MusicPlayer = ({ navigation }) => {
     const [previousDisabled, setPreviousDisabled] = useState(false);
     const [filteredQueue, setFilteredQueue] = useState([]);
     const playerContext = usePlayerContext();
-    const [comments, setComments] = useState([]);
 
     useEffect(() => {
         if (playerContext.trackQueue && playerContext.currentTrack) {
@@ -40,7 +39,7 @@ const MusicPlayer = ({ navigation }) => {
 
     const getTrackComments = async () => {
         await tracksRef.doc(playerContext.currentTrack.id).get().then(response => {
-            setComments(response.data().comments);
+            dispatch(trackComments(response.data().comments));
         })
     }
 
@@ -106,15 +105,14 @@ const MusicPlayer = ({ navigation }) => {
                 </ScrollView>
             </SafeAreaView>
             <QueueModal tracks={filteredQueue} navigation={navigation}/>
-            <CommentsModal comments={comments}/>
+            <CommentsModal/>
         </>
     )
 }
 
 MusicPlayer.propTypes = {
     tracks: PropTypes.object,
-    navigation: PropTypes.object,
-    comments: PropTypes.object
+    navigation: PropTypes.object
 }
 
 const styles = StyleSheet.create({
