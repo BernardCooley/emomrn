@@ -52,8 +52,6 @@ const TracksList = ({ navigation, tracks, listLocation }) => {
     }
 
     const DotsIcon = track => {
-        console.log(track);
-        
         return (
             <>
                 {listLocation !== 'playerQueue' &&
