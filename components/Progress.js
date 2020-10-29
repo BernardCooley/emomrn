@@ -2,8 +2,10 @@ import React, { useState, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ProgressBar, useTheme, Text } from 'react-native-paper';
 import { usePlayerContext } from '../contexts/PlayerContext';
+import { useTrackPlayerProgress } from 'react-native-track-player/lib/hooks';
 
 const Progress = ({ }) => {
+    const { position, bufferedPosition, duration } = useTrackPlayerProgress();
     let progressRef = useRef();
     const playerContext = usePlayerContext();
     const [progressBarWidth, setProgressBarWidth] = useState(0);
@@ -31,13 +33,17 @@ const Progress = ({ }) => {
 
     return (
         <View style={styles.progressBarContainer}>
+            <View>
+                <ProgressBar style={styles.bufferedBar}
+                    progress={Math.round(bufferedPosition) / playerContext.currentTrack.duration} color='black' />
+            </View>
             <View onTouchEnd={(e) => skipToTime(e)} onTouchMove={(e) => skipToTime(e)} ref={(ref) => { progressRef = ref }}
                 onLayout={(event) => getProgressBarDetails(event)}>
                 <ProgressBar style={styles.progressBar}
-                    progress={Math.round(playerContext.progress) / playerContext.currentTrack.duration} color='black' />
+                    progress={Math.round(position) / playerContext.currentTrack.duration} color='black' />
             </View>
             <View style={styles.timeContainer}>
-                <Text style={styles.timeText}>{convertToMins(parseInt(Math.round(playerContext.progress)))}</Text>
+                <Text style={styles.timeText}>{convertToMins(parseInt(Math.round(position)))}</Text>
                 <Text style={styles.timeText}>{convertToMins(parseInt(playerContext.currentTrack.duration))}</Text>
             </View>
         </View>
@@ -60,6 +66,10 @@ const styles = StyleSheet.create({
     progressBar: {
         height: 7,
         borderRadius: 5
+    },
+    bufferedBar: {
+        position: 'relative',
+        top: 5
     }
 });
 
