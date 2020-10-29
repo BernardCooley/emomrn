@@ -33,14 +33,14 @@ const Progress = ({ }) => {
 
     return (
         <View style={styles.progressBarContainer}>
-            <View>
-                <ProgressBar style={styles.bufferedBar}
-                    progress={Math.round(bufferedPosition) / playerContext.currentTrack.duration} color='black' />
-            </View>
-            <View onTouchEnd={(e) => skipToTime(e)} onTouchMove={(e) => skipToTime(e)} ref={(ref) => { progressRef = ref }}
+            <View hitSlop={{top: 15, bottom: 15, left: 0, right: 0}} onTouchEnd={(e) => skipToTime(e)} onTouchMove={(e) => skipToTime(e)} ref={(ref) => { progressRef = ref }}
                 onLayout={(event) => getProgressBarDetails(event)}>
                 <ProgressBar style={styles.progressBar}
                     progress={Math.round(position) / playerContext.currentTrack.duration} color='black' />
+            </View>
+            <View>
+                <ProgressBar style={styles.bufferedBar}
+                    progress={Math.round(bufferedPosition) / playerContext.currentTrack.duration} color='black' />
             </View>
             <View style={styles.timeContainer}>
                 <Text style={styles.timeText}>{convertToMins(parseInt(Math.round(position)))}</Text>
@@ -68,8 +68,7 @@ const styles = StyleSheet.create({
         borderRadius: 5
     },
     bufferedBar: {
-        position: 'relative',
-        top: 5
+        height: 1
     }
 });
 
