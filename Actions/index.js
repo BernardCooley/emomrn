@@ -32,3 +32,17 @@ export const artists = artists => {
         payload: artists
     };
 };
+
+export const queueModalVisible = visible => {
+    return {
+        type: 'QUEUE_MODAL_VISIBLE',
+        payload: visible
+    };
+};
+
+export const commentsModalVisible = visible => {
+    return {
+        type: 'COMMENTS_MODAL_VISIBLE',
+        payload: visible
+    };
+};

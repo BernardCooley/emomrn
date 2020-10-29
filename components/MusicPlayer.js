@@ -4,17 +4,22 @@ import { Title, Text, Avatar, IconButton } from 'react-native-paper';
 import { usePlayerContext } from '../contexts/PlayerContext';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import firestore from '@react-native-firebase/firestore';
 
+import { commentsModalVisible, queueModalVisible } from '../Actions/index';
 import Progress from './Progress';
 import QueueModal from '../components/QueueModal';
+import CommentsModal from '../components/CommentsModal';
 
 const MusicPlayer = ({ navigation }) => {
+    const tracksRef = firestore().collection('tracks');
+    const dispatch = useDispatch();
     const [nextDisabled, setNextDisabled] = useState(false);
     const [previousDisabled, setPreviousDisabled] = useState(false);
     const [filteredQueue, setFilteredQueue] = useState([]);
-    const [showCommentsOrQueue, setShowCommentsOrQueue] = useState('');
     const playerContext = usePlayerContext();
-    const [modalVisible, setModalVisible] = useState(false);
+    const [comments, setComments] = useState([]);
 
     useEffect(() => {
         if (playerContext.trackQueue && playerContext.currentTrack) {
@@ -27,9 +32,17 @@ const MusicPlayer = ({ navigation }) => {
 
             queue.splice(0, currentIdex + 1);
             setFilteredQueue(queue);
-            setModalVisible(false);
+            dispatch(queueModalVisible(false));
+            dispatch(commentsModalVisible(false));
+            getTrackComments();
         }
     }, [playerContext.trackQueue, playerContext.currentTrack]);
+
+    const getTrackComments = async () => {
+        await tracksRef.doc(playerContext.currentTrack.id).get().then(response => {
+            setComments(response.data().comments);
+        })
+    }
 
     const playPause = () => {
         if (playerContext.isPlaying) {
@@ -86,13 +99,14 @@ const MusicPlayer = ({ navigation }) => {
                             <IconButton animated icon="repeat" size={30} onPress={e => openMenu(e, tracks[key])} />
                         </View>
                         <View style={{ ...styles.otherControlsContainer, ...styles.sectionContainer }}>
-                            <IconButton animated icon="comment" size={20} onPress={() => setShowCommentsOrQueue('comments')} />
-                            <IconButton disabled={filteredQueue.length === 0} animated icon="playlist-play" size={20} onPress={() => setModalVisible(true)} />
+                            <IconButton animated icon="comment" size={20} onPress={() => dispatch(commentsModalVisible(true))} />
+                            <IconButton disabled={filteredQueue.length === 0} animated icon="playlist-play" size={20} onPress={() => dispatch(queueModalVisible(true))} />
                         </View>
                     </LinearGradient>
                 </ScrollView>
             </SafeAreaView>
-            <QueueModal tracks={filteredQueue} navigation={navigation} show={modalVisible}/>
+            <QueueModal tracks={filteredQueue} navigation={navigation}/>
+            <CommentsModal comments={comments}/>
         </>
     )
 }
@@ -100,7 +114,7 @@ const MusicPlayer = ({ navigation }) => {
 MusicPlayer.propTypes = {
     tracks: PropTypes.object,
     navigation: PropTypes.object,
-    show: PropTypes.bool
+    comments: PropTypes.object
 }
 
 const styles = StyleSheet.create({
