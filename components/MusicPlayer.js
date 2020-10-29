@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, SafeAreaView, ScrollView } from 'react-native';
-import { Title, Text, Avatar, IconButton, useTheme, Modal, Portal, Provider } from 'react-native-paper';
+import { Title, Text, Avatar, IconButton, useTheme, Modal, Portal, Provider, Button } from 'react-native-paper';
 import { usePlayerContext } from '../contexts/PlayerContext';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
@@ -9,12 +9,13 @@ import TracksList from '../components/TracksList';
 import Progress from './Progress';
 
 const MusicPlayer = ({ navigation }) => {
+    const { colors } = useTheme();
     const [nextDisabled, setNextDisabled] = useState(false);
     const [previousDisabled, setPreviousDisabled] = useState(false);
     const [filteredQueue, setFilteredQueue] = useState([]);
     const [showCommentsOrQueue, setShowCommentsOrQueue] = useState('');
     const playerContext = usePlayerContext();
-    const [modalVisible, setModalVisible] = React.useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         if (playerContext.trackQueue && playerContext.currentTrack) {
@@ -71,11 +72,11 @@ const MusicPlayer = ({ navigation }) => {
                         <View style={{ ...styles.trackImageContainer, ...styles.sectionContainer }}>
                             <Avatar.Image source={{ uri: playerContext.currentTrack.trackImage }} size={300} style={styles.image}></Avatar.Image>
                         </View>
-                        <View style={{ ...styles.trackDetailsContainer, ...styles.sectionContainer }}>
+                        <View style={styles.sectionContainer}>
                             <Title>{playerContext.currentTrack.title}</Title>
                             <Text>{playerContext.currentTrack.artist}</Text>
                         </View>
-                        <View style={{ ...styles.trackProgressContainer, ...styles.sectionContainer }}>
+                        <View style={styles.sectionContainer}>
                             <Progress />
                         </View>
                         <View style={{ ...styles.trackControlsContainer, ...styles.sectionContainer }}>
@@ -99,6 +100,8 @@ const MusicPlayer = ({ navigation }) => {
                             <Title>Queue</Title>
                             <TracksList tracks={filteredQueue} navigation={navigation} listLocation='playerQueue' />
                         </View>
+                        <Button color={colors.primary} mode='text' onPress={() => playerContext.clearQueue()} style={styles.clearButton}>Clear</Button>
+                        <IconButton style={styles.closeIcon} animated icon="close" size={20} onPress={() => setModalVisible(false)} />
                     </Modal>
                 </Portal>
             </Provider>
@@ -131,12 +134,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    trackDetailsContainer: {
-
-    },
-    trackProgressContainer: {
-
-    },
     trackControlsContainer: {
         display: 'flex',
         flexDirection: 'row',
@@ -159,6 +156,16 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
         borderRadius: 10
+    },
+    clearButton: {
+        position: 'absolute',
+        bottom: 10,
+        right: 10
+    },
+    closeIcon: {
+        position: 'absolute',
+        top: 10,
+        right: 10
     }
 });
 

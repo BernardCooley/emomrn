@@ -13,6 +13,7 @@ interface PlayerContextType {
     next: () => void;
     previous: () => void;
     seekTo: (seconds: number) => void;
+    clearQueue: () => void;
 }
 
 export const PlayerContext = React.createContext<PlayerContextType>({
@@ -26,7 +27,8 @@ export const PlayerContext = React.createContext<PlayerContextType>({
     pause: () => null,
     next: () => null,
     previous: () => null,
-    seekTo: () => null
+    seekTo: () => null,
+    clearQueue: () => null
 })
 
 export const PlayerContextProvider: React.FC = props => {
@@ -57,7 +59,7 @@ export const PlayerContextProvider: React.FC = props => {
         const currentQueue = await getCurrentQueue();
 
         if (!track && !queue) {
-             // No track clicked and not added to queue
+            // No track clicked and not added to queue
             if (currentTrack) {
                 await RNTrackPlayer.play()
             }
@@ -74,43 +76,31 @@ export const PlayerContextProvider: React.FC = props => {
                     // Track is already in queue
                     await RNTrackPlayer.remove(track.id).then(async () => {
                         await RNTrackPlayer.add([track]).then(async () => {
-                            await RNTrackPlayer.skip(track.id).then(async () => {
-                                setCurrentTrack(track);
-                                setTrackQueue(await getCurrentQueue());
-                            });
+                            skipToTrack(track);
                         })
                     })
                 } else {
                     const index = currentQueue.indexOf(currentQueue.filter(tr => tr.id === currentTrack.id)[0]);
 
-                    if(currentQueue.length > 1) {
+                    if (currentQueue.length > 1) {
                         // More than 1 track in queue
-                        if(currentQueue.length === index + 1) {
+                        if (currentQueue.length === index + 1) {
                             // Current IS the last track
                             await RNTrackPlayer.add([track]).then(async () => {
-                                await RNTrackPlayer.skip(track.id).then(async () => {
-                                    setCurrentTrack(track);
-                                    setTrackQueue(await getCurrentQueue());
-                                })
+                                skipToTrack(track);
                             })
-                        }else {
+                        } else {
                             // Current is NOT the last track
                             await RNTrackPlayer.add([track], currentQueue[index + 1].id).then(async () => {
-                                await RNTrackPlayer.skip(track.id).then(async () => {
-                                    setCurrentTrack(track);
-                                    setTrackQueue(await getCurrentQueue());
-                                })
+                                skipToTrack(track);
                             });
                         }
-                    }else {
+                    } else {
                         // Only 1 track in queue
                         const current = currentTrack;
                         await RNTrackPlayer.reset().then(async () => {
                             await RNTrackPlayer.add([current, track]).then(async () => {
-                                await RNTrackPlayer.skip(track.id).then(async () => {
-                                    setCurrentTrack(track);
-                                    setTrackQueue(await getCurrentQueue());
-                                })
+                                skipToTrack(track);
                             })
                         });
                     }
@@ -164,6 +154,27 @@ export const PlayerContextProvider: React.FC = props => {
         })
     }
 
+    const clearQueue = async () => {
+        const currentQueue = await getCurrentQueue();
+        const currentTrackFromQueue = currentQueue.filter(tr => tr.id === currentTrack.id)[0];
+        const index = currentQueue.indexOf(currentTrackFromQueue);
+        const queuePrevious = currentQueue.splice(0, index + 1);
+        const trackToSkipTo = queuePrevious[queuePrevious.length - 1];
+
+        await RNTrackPlayer.reset().then(async () => {
+            await RNTrackPlayer.add(queuePrevious).then(async () => {
+                skipToTrack(trackToSkipTo);
+            })
+        })
+    }
+
+    const skipToTrack = async (track: Track) => {
+        await RNTrackPlayer.skip(track.id).then(async () => {
+            setCurrentTrack(track);
+            setTrackQueue(await getCurrentQueue());
+        })
+    }
+
     const value: PlayerContextType = {
         isPlaying: playerState === STATE_PLAYING,
         isPaused: playerState === STATE_PAUSED,
@@ -175,7 +186,8 @@ export const PlayerContextProvider: React.FC = props => {
         play,
         next,
         previous,
-        seekTo
+        seekTo,
+        clearQueue
     }
 
     return (
