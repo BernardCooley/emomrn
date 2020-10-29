@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
         borderRadius: 5
     },
     bufferedBar: {
-        height: 1
+        height: 2
     }
 });
 

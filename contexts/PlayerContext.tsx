@@ -37,7 +37,7 @@ export const PlayerContextProvider: React.FC = props => {
     useEffect(() => {
         const listener = RNTrackPlayer.addEventListener(
             'playback-state',
-            ({state}: {state: TrackPlayerState}) => {
+            ({ state }: { state: TrackPlayerState }) => {
                 setPlayerState(state);
             }
         )
@@ -56,37 +56,49 @@ export const PlayerContextProvider: React.FC = props => {
     const play = async (track?: Track, queue?: Boolean) => {
         const currentQueue = await getCurrentQueue();
 
-        if(!track && !queue) {
+        if (!track && !queue) {
             if (currentTrack) {
                 await RNTrackPlayer.play()
             }
             return;
-        }else if(track && !queue) {
-            if(currentQueue.length === 0) {
+        } else if (track && !queue) {
+            if (currentQueue.length === 0) {
                 await RNTrackPlayer.add([track]).then(async () => {
                     setCurrentTrack(track);
                     setTrackQueue(await getCurrentQueue());
                 })
-            }else {
+            } else {
                 if (currentQueue.filter(tr => tr.id === track.id).length > 0) {
                     await RNTrackPlayer.skip(track.id);
                     setCurrentTrack(track);
-                }else {
-                    await RNTrackPlayer.add([track], currentQueue[0].id).then(async () => {
-                        await RNTrackPlayer.skip(track.id);
-                        setCurrentTrack(track);
-                        setTrackQueue(await getCurrentQueue());
-                    });
+                } else {
+                    const index = currentQueue.indexOf(currentTrack);
+                    if(currentQueue.length > 1) {
+                        await RNTrackPlayer.add([track], currentQueue[index+1].id).then(async () => {
+                            await RNTrackPlayer.skip(track.id);
+                            setCurrentTrack(track);
+                            setTrackQueue(await getCurrentQueue());
+                        });
+                    } else {
+                        const current = currentTrack;
+                        await RNTrackPlayer.reset().then(async () => {
+                            await RNTrackPlayer.add([current, track]).then(async () => {
+                                await RNTrackPlayer.skip(track.id);
+                                setCurrentTrack(track);
+                                setTrackQueue(await getCurrentQueue());
+                            })
+                        });
+                    }
                 }
             }
             await RNTrackPlayer.play()
-        }else if(track && queue) {
+        } else if (track && queue) {
             if (currentQueue.filter(tr => tr.id === track.id).length > 0) {
                 alert('Already in queue');
             } else {
                 await RNTrackPlayer.add([track]).then(async () => {
                     setTrackQueue(await getCurrentQueue());
-                })  
+                })
             }
         }
     }

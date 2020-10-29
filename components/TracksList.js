@@ -5,9 +5,10 @@ import { usePlayerContext } from '../contexts/PlayerContext';
 import storage from '@react-native-firebase/storage';
 import { useDispatch } from 'react-redux';
 import { artistProfileId } from '../Actions/index';
+import PropTypes from 'prop-types';
 
 
-const TracksList = ({ navigation, tracks }) => {
+const TracksList = ({ navigation, tracks, listLocation }) => {
     const dispatch = useDispatch();
     const playerContext = usePlayerContext();
     const [showMenu, setShowMenu] = useState(false);
@@ -33,7 +34,7 @@ const TracksList = ({ navigation, tracks }) => {
 
     const queueTrack = async () => {
         setShowMenu(false);
-        await storage().ref(`tracks/${clickedTrack.id}.wav`).getDownloadURL().then(url => {
+        await storage().ref(`tracks/${clickedTrack.id}.mp3`).getDownloadURL().then(url => {
             clickedTrack['url'] = url;
             playerContext.play(clickedTrack, true);
             navigation.navigate('Tabs', { screen: 'Music' });
@@ -50,6 +51,18 @@ const TracksList = ({ navigation, tracks }) => {
         setShowMenu(false);
     }
 
+    const DotsIcon = track => {
+        console.log(track);
+        
+        return (
+            <>
+                {listLocation !== 'playerQueue' &&
+                    <IconButton animated icon="dots-vertical" size={30} onPress={e => openMenu(e, track.track)} />
+                }
+            </>
+        )
+    }
+
     const TracksList = () => (
         <>
             {
@@ -60,17 +73,15 @@ const TracksList = ({ navigation, tracks }) => {
                             descriptionNumberOfLines={1}
                             titleEllipsizeMode='tail'
                             descriptionEllipsizeMode='tail'
-                            titleStyle={{ fontSize: 16 }}
-                            descriptionStyle={{ fontSize: 24 }}
+                            titleStyle={{ fontSize: 15 }}
+                            descriptionStyle={{ fontSize: 22 }}
                             style={styles.listItem}
                             title={tracks[key].artist}
                             description={tracks[key].title}
                             left={() =>
                                 <Avatar.Image style={styles.trackImage} size={50} source={{ uri: tracks[key].trackImage }} />
                             }
-                            right={() =>
-                                <IconButton animated icon="dots-vertical" size={30} onPress={e => openMenu(e, tracks[key])} />
-                            }
+                            right={() => <DotsIcon track={tracks[key]}/>}
                             onPress={() => playTrack(tracks[key])}
                         />
                         <Divider />
@@ -79,6 +90,11 @@ const TracksList = ({ navigation, tracks }) => {
             }
         </>
     );
+
+    TracksList.propTypes = {
+        track: PropTypes.object
+    }
+
     return (
         <>
             <Menu
@@ -96,11 +112,14 @@ const TracksList = ({ navigation, tracks }) => {
 
 const styles = StyleSheet.create({
     listItem: {
-        width: '100%',
-        height: 80
+        height: 60,
+        paddingVertical: 0,
+        paddingHorizontal: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: 'lightgray'
     },
     trackImage: {
-        height: 80,
+        height: 'auto',
         display: 'flex',
         justifyContent: 'center',
         backgroundColor: 'transparent'
